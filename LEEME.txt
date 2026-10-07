@@ -1,0 +1,8 @@
+ANIME LIVE DETECTOR
+
+1. Haz doble clic en INICIAR_ANIME_DETECTOR.bat
+2. La primera vez puede tardar unos minutos mientras prepara los componentes.
+3. Se abrirá automáticamente http://localhost:3000
+4. Pon tu usuario de TikTok y conecta.
+
+No necesitas abrir CMD ni escribir comandos.

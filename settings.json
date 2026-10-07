@@ -1,0 +1,34 @@
+{
+  "rules": {
+    "chat": {
+      "enabled": false,
+      "approval": "auto",
+      "mode": "random",
+      "characterId": "",
+      "giftName": ""
+    },
+    "follow": {
+      "enabled": true,
+      "approval": "auto",
+      "mode": "random",
+      "characterId": "",
+      "giftName": ""
+    },
+    "gift": {
+      "enabled": true,
+      "approval": "auto",
+      "mode": "random",
+      "characterId": "",
+      "giftName": ""
+    }
+  },
+  "giftMappings": [],
+  "overlayConfig": {
+    "soundEnabled": true
+  },
+  "goalConfig": {
+    "targetGifts": 50,
+    "rewardCharacterId": "",
+    "rerollGiftName": "Piano"
+  }
+}

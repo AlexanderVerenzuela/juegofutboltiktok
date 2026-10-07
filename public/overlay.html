@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Champions del LIVE - TikTok OBS 9:16 Overlay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Teko:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold-primary: #ffd700;
+      --gold-secondary: #ffaa00;
+      --gold-dark: #b8860b;
+      --cyan-bright: #00f2fe;
+      --green-live: #00ff88;
+      --purple-elite: #a855f7;
+      --dark-bg: transparent;
+      --card-bg: rgba(10, 20, 42, 0.94);
+      --panel-border: rgba(255, 215, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* 100% TRANSPARENT BACKGROUND FOR OBS CUSTOM STREAM BACKGROUNDS */
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent !important;
+      background-image: none !important;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body::before {
+      display: none !important;
+    }
+
+    /* PERFECT 1080x1920 NATIVE VERTICAL OVERLAY CANVAS WITH VECTOR AUTO-SCALER */
+    .champions-container {
+      position: absolute;
+      z-index: 1;
+      width: 1080px;
+      height: 1920px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 20px;
+      overflow: hidden;
+      transform-origin: center center;
+    }
+
+    /* 1. TOP HEADER SECTION (TRANSPARENT RESERVED GAP FOR STREAMER OBS GRAPHICS) */
+    .top-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 160px;
+      flex-shrink: 0;
+    }
+
+    /* 2. HORIZONTAL ÚLTIMOS JUGADORES BAR (EXPANDED BIGGER ROW) */
+    .horizontal-feed-box {
+      background: var(--card-bg);
+      border: 2.5px solid var(--panel-border);
+      border-radius: 24px;
+      padding: 14px 18px;
+      height: 230px;
+      flex-shrink: 0;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .horizontal-feed-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .horizontal-feed-cards-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      height: 165px;
+    }
+
+    .horizontal-feed-card {
+      background: rgba(15, 30, 60, 0.85);
+      border: 2px solid rgba(0, 242, 254, 0.45);
+      border-radius: 16px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .feed-user-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 100%;
+    }
+
+    .user-avatar-mini {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--gold-primary);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .feed-username {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+
+    .feed-face-wrap {
+      width: 100%;
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feed-face-img {
+      height: 72px;
+      object-fit: contain;
+      object-position: center bottom;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.95));
+    }
+
+    .feed-char-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--cyan-bright);
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1;
+    }
+
+    .feed-ovr-badge {
+      font-size: 13px;
+      font-weight: 900;
+      color: #ffd700;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #ffd700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    /* 3. FULL-WIDTH TABLA DE POSICIONES (TOP 5 LEADERBOARD) */
+    .leaderboard-full-box {
+      background: var(--card-bg);
+      border: 2.5px solid var(--panel-border);
+      border-radius: 26px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 1380px;
+      flex-shrink: 0;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .panel-title-bar {
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.35), rgba(10, 20, 42, 0.95));
+      border-bottom: 2px solid rgba(255, 215, 0, 0.45);
+      padding: 16px 24px;
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .lb-table-headers {
+      display: grid;
+      grid-template-columns: 45px 200px 1fr 220px;
+      gap: 14px;
+      padding: 16px 24px;
+      background: rgba(0, 0, 0, 0.55);
+      font-size: 18px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.85);
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.14);
+      flex-shrink: 0;
+    }
+
+    .lb-rows-list {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .lb-row-item {
+      display: grid;
+      grid-template-columns: 45px 200px 1fr 220px;
+      align-items: center;
+      gap: 14px;
+      background: rgba(12, 24, 48, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px;
+      padding: 14px 20px;
+      height: 220px;
+      flex-shrink: 0;
+    }
+
+    .lb-row-item.rank-1 {
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.38), rgba(12, 24, 48, 0.95));
+      border-color: rgba(255, 215, 0, 0.9);
+    }
+    .lb-row-item.rank-2 {
+      background: linear-gradient(90deg, rgba(192, 192, 192, 0.35), rgba(12, 24, 48, 0.95));
+      border-color: rgba(192, 192, 192, 0.8);
+    }
+    .lb-row-item.rank-3 {
+      background: linear-gradient(90deg, rgba(205, 127, 50, 0.35), rgba(12, 24, 48, 0.95));
+      border-color: rgba(205, 127, 50, 0.8);
+    }
+
+    .lb-rank-num {
+      font-size: 34px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.85);
+      text-align: center;
+    }
+    .rank-1 .lb-rank-num { color: #ffd700; }
+    .rank-2 .lb-rank-num { color: #c0c0c0; }
+    .rank-3 .lb-rank-num { color: #cd7f32; }
+
+    .lb-user-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .user-avatar-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .lb-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 3px solid rgba(255,215,0,0.85);
+    }
+
+    .lb-username {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 145px;
+    }
+
+    /* MASSIVE FACE CUTOUTS WITH OVR BADGES BELOW THE CUTOUT */
+    .lb-squad-mini-grid {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 14px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .squad-mini-face-wrap {
+      width: 112px;
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      position: relative;
+    }
+
+    .squad-mini-face-img {
+      width: 100%;
+      height: 135px;
+      object-fit: contain;
+      object-position: center bottom;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.95));
+    }
+
+    /* RATING BADGE POSITIONED BELOW THE FACE CUTOUT AS REQUESTED */
+    .ovr-badge-pill-bottom {
+      background: linear-gradient(135deg, #ffd700 0%, #ff8800 100%);
+      color: #050a18;
+      font-size: 15px;
+      font-weight: 900;
+      padding: 3px 9px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.9);
+      border: 1.5px solid #ffffff;
+      margin-top: 2px;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .squad-slot-empty {
+      width: 112px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      color: rgba(255, 255, 255, 0.25);
+      flex-shrink: 0;
+    }
+
+    .lb-copas-cell {
+      font-size: 30px;
+      font-weight: 900;
+      color: #ffd700;
+      text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    /* FRONT POP-UP ALERT OVERLAY */
+    .popup-overlay-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(3, 8, 20, 0.85);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: 99999;
+    }
+
+    .popup-overlay-container.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .alert-card-box {
+      background: linear-gradient(135deg, #091c36 0%, #050e1f 100%);
+      border: 5px solid #00f2fe;
+      border-radius: 36px;
+      padding: 40px 45px;
+      width: 780px;
+      max-width: 90vw;
+      text-align: center;
+      box-shadow: 0 30px 120px rgba(0, 0, 0, 0.95), 0 0 80px rgba(0, 242, 254, 0.85);
+      position: relative;
+      overflow: hidden;
+      transform: scale(0.75);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: alertPulse 2s infinite alternate;
+    }
+
+    .popup-overlay-container.active .alert-card-box {
+      transform: scale(1);
+    }
+
+    @keyframes alertPulse {
+      0% { box-shadow: 0 30px 120px rgba(0, 0, 0, 0.95), 0 0 50px rgba(0, 242, 254, 0.6); }
+      100% { box-shadow: 0 30px 120px rgba(0, 0, 0, 0.95), 0 0 90px rgba(0, 242, 254, 0.95); }
+    }
+
+    .alert-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #00ff88, #00f2fe);
+      color: #040e07;
+      padding: 8px 28px;
+      border-radius: 999px;
+      font-size: 22px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 14px;
+    }
+
+    .alert-user {
+      font-size: 48px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 6px;
+      text-shadow: 0 0 24px rgba(255, 255, 255, 0.6);
+    }
+
+    .alert-gift {
+      font-size: 26px;
+      color: #ffd700;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .alert-img-frame {
+      width: 290px;
+      height: 310px;
+      margin: 0 auto 16px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .alert-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center bottom;
+      filter: drop-shadow(0 12px 28px rgba(0,0,0,0.95));
+    }
+
+    .alert-char {
+      font-size: 50px;
+      font-weight: 900;
+      color: #00f2fe;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 24px rgba(0, 242, 254, 0.9);
+    }
+
+    .alert-ovr-box {
+      font-size: 34px;
+      font-weight: 900;
+      color: #ffd700;
+      margin-top: 10px;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.85);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="champions-container" id="mainContainer">
+    
+    <!-- 1. TOP HEADER SECTION (TRANSPARENT RESERVED GAP FOR STREAMER OBS GRAPHICS) -->
+    <div class="top-header-bar"></div>
+
+    <!-- 2. HORIZONTAL ÚLTIMOS JUGADORES BAR (EXPANDED BIGGER ROW) -->
+    <div class="horizontal-feed-box">
+      <div class="horizontal-feed-title">
+        <span>⚽ ÚLTIMOS JUGADORES FICHADOS</span>
+      </div>
+      <div class="horizontal-feed-cards-row" id="feedList">
+        <!-- DYNAMIC HORIZONTAL FEED CARDS -->
+      </div>
+    </div>
+
+    <!-- 3. FULL-WIDTH TABLA DE POSICIONES (TOP 5 LEADERBOARD) -->
+    <div class="leaderboard-full-box">
+      <div class="panel-title-bar">
+        <span>🏆 TABLA DE POSICIONES (TOP 5)</span>
+      </div>
+      <div class="lb-table-headers">
+        <span>#</span>
+        <span>USUARIO</span>
+        <span>PLANTILLA (5 JUGADORES)</span>
+        <span>PUNTOS TOTALES</span>
+      </div>
+      <div class="lb-rows-list" id="leaderboardList">
+        <!-- DYNAMIC FULL-WIDTH LEADERBOARD ROWS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 4. FRONT POP-UP ALERT OVERLAY WITH OVR AND MULTIPLIER -->
+  <div class="popup-overlay-container" id="popupAlert">
+    <div class="alert-card-box">
+      <div class="alert-badge">⚽ ¡NUEVO JUGADOR FICHADO!</div>
+      <div class="alert-user" id="alertUsername">@Diego</div>
+      <div class="alert-gift" id="alertGiftName">Obtuvo un jugador</div>
+      <div class="alert-img-frame">
+        <img id="alertImage" class="alert-img" src="/uploads/player_3.png" alt="Jugador">
+      </div>
+      <div class="alert-char" id="alertCharName">Kylian Mbappé</div>
+      <div class="alert-ovr-box" id="alertOvrBadge">⚡ 91 OVR (x10)</div>
+    </div>
+  </div>
+
+  <script>
+    // AUTO VECTOR SCALER ENGINE (FITS 1080x1920 NATIVE CANVAS TO ANY WINDOW / OBS RESOLUTION)
+    function fitOverlayToWindow() {
+      const container = document.getElementById('mainContainer');
+      if (!container) return;
+      const targetW = 1080;
+      const targetH = 1920;
+      const windowW = window.innerWidth || document.documentElement.clientWidth;
+      const windowH = window.innerHeight || document.documentElement.clientHeight;
+      
+      const scaleX = windowW / targetW;
+      const scaleY = windowH / targetH;
+      const scale = Math.min(scaleX, scaleY);
+
+      container.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener('resize', fitOverlayToWindow);
+    window.addEventListener('DOMContentLoaded', fitOverlayToWindow);
+    window.addEventListener('load', fitOverlayToWindow);
+    fitOverlayToWindow();
+
+    const seenEventIds = new Set();
+    const popupQueue = [];
+    let isShowingPopup = false;
+    let audioCtx = null;
+    let isInitialStateLoad = true;
+
+    const sampleFeed = [
+      { username: "Diego", rating: 91, multiplier: 10, character: "Kylian Mbappé", image: "/uploads/player_3.png", userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diego" },
+      { username: "Carlos", rating: 88, multiplier: 5, character: "Luka Modrić", image: "/uploads/player_13.png", userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos" },
+      { username: "María", rating: 88, multiplier: 5, character: "Robert Lewandowski", image: "/uploads/player_8.png", userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria" },
+      { username: "Luis", rating: 99, multiplier: 30, character: "Ronaldinho", image: "/uploads/player_36.png", userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Luis" },
+      { username: "José", rating: 78, multiplier: 1, character: "Arda Güler", image: "/uploads/player_31.png", userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jose" }
+    ];
+
+    const sampleLeaderboard = [
+      { rank: 1, username: "Samuel", score: 2970, userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Samuel", squad: [
+        { name: "Ronaldinho", rating: 99, multiplier: 30, image: "/uploads/player_36.png" },
+        { name: "Messi", rating: 93, multiplier: 10, image: "/uploads/player_1.png" },
+        { name: "Mbappé", rating: 91, multiplier: 10, image: "/uploads/player_3.png" }
+      ]},
+      { rank: 2, username: "Carlos", score: 1250, userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos", squad: [
+        { name: "Mbappé", rating: 91, multiplier: 10, image: "/uploads/player_3.png" },
+        { name: "Bellingham", rating: 90, multiplier: 5, image: "/uploads/player_6.png" }
+      ]},
+      { rank: 3, username: "Diego", score: 890, userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diego", squad: [
+        { name: "Lewandowski", rating: 88, multiplier: 5, image: "/uploads/player_8.png" }
+      ]},
+      { rank: 4, username: "Luis", score: 450, userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Luis", squad: [
+        { name: "Modrić", rating: 88, multiplier: 5, image: "/uploads/player_13.png" }
+      ]},
+      { rank: 5, username: "José", score: 78, userAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jose", squad: [
+        { name: "Arda Güler", rating: 78, multiplier: 1, image: "/uploads/player_31.png" }
+      ]}
+    ];
+
+    function esc(s) {
+      return String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
+    }
+
+    function playChimeSound() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.08);
+        osc.frequency.setValueAtTime(783.99, now + 0.16);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      } catch (e) {}
+    }
+
+    async function processPopupQueue() {
+      if (isShowingPopup || popupQueue.length === 0) return;
+      isShowingPopup = true;
+
+      const item = popupQueue.shift();
+      const popup = document.getElementById('popupAlert');
+
+      const rating = item.rating || item.squad?.[item.squad.length - 1]?.rating || 85;
+      const mult = item.multiplier || item.squad?.[item.squad.length - 1]?.multiplier || 1;
+
+      document.getElementById('alertUsername').textContent = '@' + item.username;
+      document.getElementById('alertGiftName').textContent = item.event?.giftName ? `¡Fichó a un jugador con ${esc(item.event.giftName)}!` : '¡Fichó un nuevo jugador!';
+      document.getElementById('alertCharName').textContent = item.character || item.name || 'Jugador';
+      document.getElementById('alertImage').src = item.image || '/uploads/player_3.png';
+      
+      const multTxt = mult > 1 ? `<span style="color:#ffd700;">(x${mult})</span>` : '(x1)';
+      document.getElementById('alertOvrBadge').innerHTML = `⚡ ${rating} AVERAGE ${multTxt}`;
+
+      playChimeSound();
+      popup.classList.add('active');
+
+      await new Promise(r => setTimeout(r, 3400));
+      popup.classList.remove('active');
+
+      await new Promise(r => setTimeout(r, 450));
+      isShowingPopup = false;
+
+      processPopupQueue();
+    }
+
+    function renderFeed(items) {
+      const container = document.getElementById('feedList');
+      if (!items || !items.length) items = sampleFeed;
+
+      container.innerHTML = items.slice(0, 5).map(item => {
+        const name = esc(item.character || item.name || 'Jugador');
+        const user = esc(item.username || 'Donador');
+        const img = item.image || '/uploads/player_3.png';
+        const avatar = item.userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user}`;
+        const rating = item.rating || 85;
+        const mult = item.multiplier || 1;
+
+        return `
+          <div class="horizontal-feed-card">
+            <div class="feed-user-top">
+              <img class="user-avatar-mini" src="${avatar}" alt="${user}">
+              <span class="feed-username">${user}</span>
+            </div>
+            <div class="feed-face-wrap">
+              <img class="feed-face-img" src="${img}" alt="${name}">
+            </div>
+            <div class="feed-char-name">${name}</div>
+            <div class="feed-ovr-badge">${rating} OVR ${mult > 1 ? `(x${mult})` : ''}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderLeaderboard(allDonors) {
+      const container = document.getElementById('leaderboardList');
+      let data = allDonors && allDonors.length ? allDonors : sampleLeaderboard;
+
+      container.innerHTML = data.slice(0, 5).map((item, idx) => {
+        const rankNum = idx + 1;
+        const rankClass = rankNum === 1 ? 'rank-1' : rankNum === 2 ? 'rank-2' : rankNum === 3 ? 'rank-3' : '';
+        const user = esc(item.username);
+        const avatar = item.userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user}`;
+        
+        let totalScore = item.score;
+        if (totalScore === undefined || totalScore === null || totalScore === 0) {
+          if (item.squad && item.squad.length) {
+            totalScore = item.squad.reduce((sum, p) => sum + ((p.rating || 85) * (p.multiplier || 1)), 0);
+          }
+        }
+        if (!totalScore) {
+          totalScore = (6 - rankNum) * 450;
+        }
+
+        // Render 5 visible face cutout cards per team (RATING BADGE BELOW CUTOUT)
+        let squadMiniHtml = '';
+        const squad = item.squad || [];
+        for (let s = 0; s < 5; s++) {
+          if (s < squad.length) {
+            const p = squad[s];
+            const pRating = p.rating || 85;
+            const pMult = p.multiplier || 1;
+            squadMiniHtml += `
+              <div class="squad-mini-face-wrap">
+                <img class="squad-mini-face-img" src="${p.image}" alt="${esc(p.name)}">
+                <div class="ovr-badge-pill-bottom">
+                  <span>${pRating} OVR</span>
+                  ${pMult > 1 ? `<span style="color:#e60039; font-weight:900;">x${pMult}</span>` : ''}
+                </div>
+              </div>
+            `;
+          } else {
+            squadMiniHtml += `<div class="squad-slot-empty">+</div>`;
+          }
+        }
+
+        return `
+          <div class="lb-row-item ${rankClass}">
+            <span class="lb-rank-num">${rankNum}</span>
+            <div class="lb-user-cell">
+              <div class="user-avatar-group">
+                <img class="lb-avatar" src="${avatar}" alt="${user}">
+                <span class="lb-username">${user}</span>
+              </div>
+            </div>
+            <div class="lb-squad-mini-grid">
+              ${squadMiniHtml}
+            </div>
+            <div class="lb-copas-cell">
+              ⚡ ${totalScore.toLocaleString()} PTS
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function refreshState() {
+      try {
+        const res = await fetch('/api/state');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const feed = data.feed || [];
+        const allDonors = data.all || [];
+
+        if (isInitialStateLoad) {
+          feed.forEach(item => {
+            const id = item.eventId || `${item.username}_${item.updatedAt || item.createdAt}`;
+            seenEventIds.add(id);
+          });
+          isInitialStateLoad = false;
+        } else {
+          for (let i = feed.length - 1; i >= 0; i--) {
+            const item = feed[i];
+            const id = item.eventId || `${item.username}_${item.updatedAt || item.createdAt}`;
+            if (!seenEventIds.has(id)) {
+              seenEventIds.add(id);
+              popupQueue.push(item);
+            }
+          }
+          processPopupQueue();
+        }
+
+        if (feed.length > 0) {
+          renderFeed(feed);
+        }
+        if (allDonors.length > 0) {
+          renderLeaderboard(allDonors);
+        }
+      } catch (err) {
+        console.error('Error refreshing state:', err);
+      }
+    }
+
+    // Initialize Default Render
+    renderFeed(sampleFeed);
+    renderLeaderboard(sampleLeaderboard);
+
+    // Poll backend state every 600ms
+    setInterval(refreshState, 600);
+    refreshState();
+  </script>
+</body>
+</html>
