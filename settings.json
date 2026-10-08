@@ -1,34 +1,72 @@
 {
   "rules": {
     "chat": {
+      "mode": "random",
       "enabled": false,
       "approval": "auto",
-      "mode": "random",
-      "characterId": "",
-      "giftName": ""
-    },
-    "follow": {
-      "enabled": true,
-      "approval": "auto",
-      "mode": "random",
-      "characterId": "",
-      "giftName": ""
+      "giftName": "",
+      "characterId": ""
     },
     "gift": {
+      "mode": "random",
       "enabled": true,
       "approval": "auto",
+      "giftName": "",
+      "characterId": ""
+    },
+    "follow": {
       "mode": "random",
-      "characterId": "",
-      "giftName": ""
+      "enabled": true,
+      "approval": "auto",
+      "giftName": "",
+      "characterId": ""
     }
-  },
-  "giftMappings": [],
-  "overlayConfig": {
-    "soundEnabled": true
   },
   "goalConfig": {
     "targetGifts": 50,
-    "rewardCharacterId": "",
-    "rerollGiftName": "Piano"
+    "rerollGiftName": "Galaxia",
+    "rewardCharacterId": ""
+  },
+  "giftMappings": [],
+  "categoryGifts": {
+    "cat1": {
+      "title": "Cat 1 - Promesas (70-80)",
+      "giftName": "Piano",
+      "coins": 1,
+      "minRating": 70,
+      "maxRating": 80,
+      "multiplier": 1,
+      "icon": "🎹"
+    },
+    "cat2": {
+      "title": "Cat 2 - Cracks (81-89)",
+      "giftName": "Dona",
+      "coins": 5,
+      "minRating": 81,
+      "maxRating": 89,
+      "multiplier": 5,
+      "icon": "🍩"
+    },
+    "cat3": {
+      "title": "Cat 3 - Estrellas (90-95)",
+      "giftName": "Gorra",
+      "coins": 10,
+      "minRating": 90,
+      "maxRating": 95,
+      "multiplier": 10,
+      "icon": "👒"
+    },
+    "cat4": {
+      "title": "Cat 4 - Leyendas (96-99)",
+      "giftName": "León",
+      "coins": 30,
+      "minRating": 96,
+      "maxRating": 99,
+      "multiplier": 30,
+      "icon": "🦁"
+    }
+  },
+  "overlayConfig": {
+    "soundEnabled": true
   }
 }

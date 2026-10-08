@@ -136,37 +136,102 @@ function chooseCharacter() {
   return available.length ? available[Math.floor(Math.random() * available.length)] : null;
 }
 
-function chooseCharacterForCoins(coinCount = 1) {
-  let minRating = 70;
-  let maxRating = 80;
+const defaultCategoryGifts = {
+  cat1: {
+    title: "Cat 1 - Promesas (70-80)",
+    giftName: "Piano",
+    coins: 1,
+    minRating: 70,
+    maxRating: 80,
+    multiplier: 1,
+    icon: "🎹"
+  },
+  cat2: {
+    title: "Cat 2 - Cracks (81-89)",
+    giftName: "Dona",
+    coins: 5,
+    minRating: 81,
+    maxRating: 89,
+    multiplier: 5,
+    icon: "🍩"
+  },
+  cat3: {
+    title: "Cat 3 - Estrellas (90-95)",
+    giftName: "Gorra",
+    coins: 10,
+    minRating: 90,
+    maxRating: 95,
+    multiplier: 10,
+    icon: "👒"
+  },
+  cat4: {
+    title: "Cat 4 - Leyendas (96-99)",
+    giftName: "León",
+    coins: 30,
+    minRating: 96,
+    maxRating: 99,
+    multiplier: 30,
+    icon: "🦁"
+  }
+};
 
-  if (coinCount >= 30) {
-    minRating = 96;
-    maxRating = 99;
-  } else if (coinCount >= 10) {
-    minRating = 91;
-    maxRating = 95;
-  } else if (coinCount >= 5) {
-    minRating = 81;
-    maxRating = 90;
-  } else {
-    minRating = 70;
-    maxRating = 80;
+function getCategoryForGift(giftName = '', coins = 1) {
+  const catGifts = settings.categoryGifts || defaultCategoryGifts;
+  const cleanGift = String(giftName || '').trim().toLowerCase();
+
+  // 1. Direct gift name match against configured category gifts
+  if (cleanGift) {
+    for (const key of ['cat4', 'cat3', 'cat2', 'cat1']) {
+      const g = catGifts[key];
+      if (g && g.giftName && g.giftName.trim().toLowerCase() === cleanGift) {
+        return key;
+      }
+    }
   }
 
-  let matching = characters.filter(c => (c.rating || 80) >= minRating && (c.rating || 80) <= maxRating);
+  // 2. Fallback by coin count
+  const c4 = catGifts.cat4?.coins ?? 30;
+  const c3 = catGifts.cat3?.coins ?? 10;
+  const c2 = catGifts.cat2?.coins ?? 5;
 
-  if (!matching.length) {
-    matching = characters.filter(c => (c.rating || 80) >= minRating - 5);
-  }
-  if (!matching.length) {
-    matching = characters;
-  }
-
-  return matching[Math.floor(Math.random() * matching.length)];
+  if (coins >= c4) return 'cat4';
+  if (coins >= c3) return 'cat3';
+  if (coins >= c2) return 'cat2';
+  return 'cat1';
 }
 
-function chooseForRule(rule, giftName = '') {
+function chooseCharacterForCategory(catKey) {
+  const catGifts = settings.categoryGifts || defaultCategoryGifts;
+  const cat = catGifts[catKey] || catGifts.cat1;
+  const min = cat.minRating ?? 70;
+  const max = cat.maxRating ?? 80;
+
+  let matching = characters.filter(c => (c.rating || 75) >= min && (c.rating || 75) <= max);
+  let available = matching.filter(c => !usedCharacters.has(c.id));
+  if (!available.length) {
+    available = matching;
+  }
+  if (!available.length) {
+    available = characters;
+  }
+  return available.length ? available[Math.floor(Math.random() * available.length)] : chooseCharacter();
+}
+
+function getMultiplierForCategory(catKey, rating = 80) {
+  const catGifts = settings.categoryGifts || defaultCategoryGifts;
+  const cat = catGifts[catKey];
+  if (cat && cat.multiplier) return cat.multiplier;
+  if (rating >= 96) return 30;
+  if (rating >= 91) return 10;
+  if (rating >= 81) return 5;
+  return 1;
+}
+
+function chooseCharacterForCoins(coinCount = 1) {
+  return chooseCharacterForCategory(getCategoryForGift('', coinCount));
+}
+
+function chooseForRule(rule, giftName = '', coinCount = 1) {
   // Check custom gift mappings first if gift event
   if (giftName && settings.giftMappings && Array.isArray(settings.giftMappings)) {
     const mapping = settings.giftMappings.find(
@@ -181,7 +246,7 @@ function chooseForRule(rule, giftName = '') {
   if (rule?.mode === 'specific' && rule.characterId) {
     return characterById(rule.characterId) || chooseCharacter();
   }
-  return chooseCharacter();
+  return chooseCharacterForCategory(getCategoryForGift(giftName, coinCount));
 }
 
 function addFeed(item) {
@@ -214,13 +279,6 @@ function setCharacter(item, char) {
   item.tier = char.tier || 'ORO';
 }
 
-function getMultiplierForCoins(diamondCount = 1, rating = 80) {
-  if (diamondCount >= 30 || rating >= 96) return 30;
-  if (diamondCount >= 10 || rating >= 91) return 10;
-  if (diamondCount >= 5 || rating >= 81) return 5;
-  return 1;
-}
-
 function assignUser(username, source = 'manual', forcedCharacter = null, eventInfo = {}, userAvatar = '') {
   username = normalizeUsername(username);
   if (!username) throw new Error('El nombre de usuario no puede estar vacío');
@@ -229,14 +287,15 @@ function assignUser(username, source = 'manual', forcedCharacter = null, eventIn
   const isGift = (eventInfo.type === 'gift');
   const giftCount = Math.max(1, parseInt(eventInfo.giftCount || 1, 10));
   const diamondCount = Math.max(1, parseInt(eventInfo.diamondCount || giftCount || 1, 10));
-  const rerollGift = (settings.goalConfig?.rerollGiftName || 'Piano').trim().toLowerCase();
+  const catKey = isGift ? getCategoryForGift(eventInfo.giftName, diamondCount) : 'cat1';
+  const rerollGift = (settings.goalConfig?.rerollGiftName || 'Galaxia').trim().toLowerCase();
   const currentGiftName = (eventInfo.giftName || '').trim().toLowerCase();
 
   let item;
   let newPlayer = forcedCharacter;
   if (!newPlayer) {
     if (isGift) {
-      newPlayer = chooseCharacterForCoins(diamondCount);
+      newPlayer = chooseCharacterForCategory(catKey);
     } else {
       newPlayer = chooseCharacter();
     }
@@ -259,7 +318,7 @@ function assignUser(username, source = 'manual', forcedCharacter = null, eventIn
 
     if (newPlayer) {
       const pRating = newPlayer.rating || 85;
-      const multiplier = getMultiplierForCoins(diamondCount, pRating);
+      const multiplier = getMultiplierForCategory(catKey, pRating);
       const pointsEarned = pRating * multiplier;
 
       item.score = (item.score || 0) + pointsEarned;
@@ -288,7 +347,7 @@ function assignUser(username, source = 'manual', forcedCharacter = null, eventIn
     usedCharacters.add(newPlayer.id);
     rank += 1;
     const pRating = newPlayer.rating || 85;
-    const multiplier = getMultiplierForCoins(diamondCount, pRating);
+    const multiplier = getMultiplierForCategory(catKey, pRating);
     const pointsEarned = pRating * multiplier;
 
     item = {
@@ -462,17 +521,19 @@ app.get('/api/state', (req, res) => {
     all: allDonors,
     pending,
     lastAlert,
-    goalConfig: settings.goalConfig || { targetGifts: 50, rewardCharacterId: '', rerollGiftName: 'Piano' },
+    goalConfig: settings.goalConfig || { targetGifts: 50, rewardCharacterId: '', rerollGiftName: 'Galaxia' },
     overlayConfig: settings.overlayConfig || {}
   });
 });
 
 app.get('/api/config', (req, res) => {
+  characters.sort((a, b) => (b.rating || 0) - (a.rating || 0) || a.name.localeCompare(b.name));
   res.json({
     characters,
     rules: settings.rules,
     giftMappings: settings.giftMappings || [],
-    goalConfig: settings.goalConfig || { targetGifts: 50, rewardCharacterId: '', rerollGiftName: 'Piano' },
+    categoryGifts: settings.categoryGifts || defaultCategoryGifts,
+    goalConfig: settings.goalConfig || { targetGifts: 50, rewardCharacterId: '', rerollGiftName: 'Galaxia' },
     overlayConfig: settings.overlayConfig || {}
   });
 });
@@ -480,6 +541,7 @@ app.get('/api/config', (req, res) => {
 app.post('/api/config', async (req, res) => {
   if (req.body.rules) settings.rules = req.body.rules;
   if (req.body.giftMappings) settings.giftMappings = req.body.giftMappings;
+  if (req.body.categoryGifts) settings.categoryGifts = req.body.categoryGifts;
   if (req.body.goalConfig) settings.goalConfig = req.body.goalConfig;
   if (req.body.overlayConfig) settings.overlayConfig = req.body.overlayConfig;
   saveJson(DATA_FILE, settings);
@@ -521,6 +583,7 @@ app.post('/api/characters', async (req, res) => {
     } else {
       characters.push(item);
     }
+    characters.sort((a, b) => (b.rating || 0) - (a.rating || 0) || a.name.localeCompare(b.name));
     saveJson(CHAR_FILE, characters);
     await dbSaveCharacter(item);
     res.json(item);
@@ -542,15 +605,26 @@ app.delete('/api/characters/:id', async (req, res) => {
 // Test/Simulator Endpoint
 app.post('/api/test-event', (req, res) => {
   try {
-    const { username = `Donador_${Math.floor(Math.random() * 900 + 100)}`, eventType = 'gift', giftName = 'Rosa de TikTok', giftCount = 1, characterId = '' } = req.body;
+    const { username = `Donador_${Math.floor(Math.random() * 900 + 100)}`, eventType = 'gift', giftName = '', giftCount = 1, characterId = '', category = '' } = req.body;
     
+    const catGifts = settings.categoryGifts || defaultCategoryGifts;
+    let resolvedGiftName = giftName;
+    let resolvedCount = giftCount;
+
+    if (category && catGifts[category]) {
+      resolvedGiftName = catGifts[category].giftName;
+      resolvedCount = catGifts[category].coins || 1;
+    } else if (!resolvedGiftName) {
+      resolvedGiftName = catGifts.cat1?.giftName || 'Piano';
+    }
+
     const forcedChar = characterId ? characterById(characterId) : null;
 
     const result = assignUser(
       username,
       `prueba_${eventType}`,
       forcedChar,
-      { type: eventType, giftName, giftCount, diamondCount: giftCount },
+      { type: eventType, giftName: resolvedGiftName, giftCount: resolvedCount, diamondCount: resolvedCount },
       `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`
     );
 

@@ -128,6 +128,36 @@ export async function initDatabase(fallbackCharacters = [], fallbackSettings = {
   }
 }
 
+export async function dbSaveAllCharacters(charactersList) {
+  const p = getPool();
+  if (!p) return false;
+  try {
+    for (const character of charactersList) {
+      const charData = { ...character };
+      delete charData.id;
+      delete charData.name;
+      delete charData.rating;
+      delete charData.image;
+
+      await p.query(
+        `INSERT INTO tiktok_futbol_characters (id, name, rating, image, data, updated_at)
+         VALUES ($1, $2, $3, $4, $5, NOW())
+         ON CONFLICT (id) DO UPDATE SET 
+           name = EXCLUDED.name, 
+           rating = EXCLUDED.rating, 
+           image = EXCLUDED.image, 
+           data = EXCLUDED.data, 
+           updated_at = NOW()`,
+        [character.id, character.name, character.rating || 85, character.image || '', JSON.stringify(charData)]
+      );
+    }
+    return true;
+  } catch (e) {
+    console.error('❌ [Supabase DB] Error al guardar lista de jugadores:', e.message);
+    return false;
+  }
+}
+
 export async function dbSaveCharacter(character) {
   const p = getPool();
   if (!p || !isConnected) return false;

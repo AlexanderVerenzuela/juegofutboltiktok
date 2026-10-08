@@ -467,25 +467,25 @@
         <div class="hint">Haz clic en cualquier regalo para simular un espectador enviándolo en tu LIVE y probar el overlay de OBS</div>
         
         <div class="simulator-grid">
-          <div class="sim-btn" onclick="sendTestGift('Rosa de TikTok', '🌹', 1)">
-            <span class="sim-icon">🌹</span>
-            <span>Rosa (1 Moneda)</span>
-            <small style="color:#00ff88;font-size:11px;font-weight:800;">70-80 OVR</small>
+          <div class="sim-btn" id="simBtnCat1" onclick="sendCategoryTest('cat1')">
+            <span class="sim-icon">🎹</span>
+            <span>Piano (1 Moneda)</span>
+            <small style="color:#00ff88;font-size:11px;font-weight:800;">70-80 OVR (x1)</small>
           </div>
-          <div class="sim-btn" onclick="sendTestGift('Dona / Corazón', '🍩', 5)">
+          <div class="sim-btn" id="simBtnCat2" onclick="sendCategoryTest('cat2')">
             <span class="sim-icon">🍩</span>
             <span>Dona (5 Monedas)</span>
-            <small style="color:#00f2fe;font-size:11px;font-weight:800;">81-90 OVR</small>
+            <small style="color:#00f2fe;font-size:11px;font-weight:800;">81-89 OVR (x5)</small>
           </div>
-          <div class="sim-btn" onclick="sendTestGift('Tiktok / Sombrero', '👒', 10)">
+          <div class="sim-btn" id="simBtnCat3" onclick="sendCategoryTest('cat3')">
             <span class="sim-icon">👒</span>
-            <span>Sombrero (10 Monedas)</span>
-            <small style="color:#a855f7;font-size:11px;font-weight:800;">91-95 OVR</small>
+            <span>Gorra (10 Monedas)</span>
+            <small style="color:#a855f7;font-size:11px;font-weight:800;">90-95 OVR (x10)</small>
           </div>
-          <div class="sim-btn" onclick="sendTestGift('León / Dragón', '🦁', 30)">
+          <div class="sim-btn" id="simBtnCat4" onclick="sendCategoryTest('cat4')">
             <span class="sim-icon">🦁</span>
             <span>León (30+ Monedas)</span>
-            <small style="color:#ffd700;font-size:11px;font-weight:800;">96-99 OVR</small>
+            <small style="color:#ffd700;font-size:11px;font-weight:800;">96-99 OVR (x30)</small>
           </div>
           <div class="sim-btn" onclick="sendTestEvent('follow')">
             <span class="sim-icon">❤️</span>
@@ -548,45 +548,105 @@
     <!-- ADMIN & CHARACTERS SECTION -->
     <section id="admin" class="admin-section">
       
-      <!-- 4 GIFT CATEGORIES & RATING TIERS CARD -->
+      <!-- 4 GIFT CATEGORIES & RATING TIERS CARD (EDITABLE) -->
       <div class="card" style="border: 1px solid rgba(0, 255, 136, 0.35);">
-        <div class="card-title">⚽ Reglas de Asignación por Monedas y Average (OVR)</div>
-        <div class="hint">Cada regalo entrega un jugador aleatorio dentro del rango de average según sus monedas:</div>
+        <div class="row" style="justify-content: space-between; align-items: center;">
+          <div>
+            <div class="card-title">⚽ Configurar Regalos de TikTok por Categoría</div>
+            <div class="hint">Edita qué regalo de TikTok entrega cada categoría de jugadores y sus monedas (ej: Piano, Rosa, Dona, etc.):</div>
+          </div>
+          <button onclick="saveCategoryGifts()" style="font-weight:900; background: var(--primary); color: #050a18;">💾 GUARDAR REGALOS</button>
+        </div>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 14px;">
-          <div style="background: rgba(0,255,136,0.08); border: 1.5px solid #00ff88; border-radius: 14px; padding: 12px; text-align: center;">
-            <div style="font-size: 26px;">🌹</div>
-            <div style="font-weight: 900; color: #00ff88; font-size: 15px; margin-top: 2px;">1 MONEDA</div>
-            <div style="font-weight: 800; font-size: 13px; color: #fff; margin-top: 2px;">PROMESAS</div>
-            <div style="font-size: 12px; color: #90b89b; margin-top: 2px;">70 – 80 Average</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 14px;">
+          <!-- CAT 1: PROMESAS (70-80) -->
+          <div style="background: rgba(0,255,136,0.08); border: 1.5px solid #00ff88; border-radius: 14px; padding: 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 26px;">🎹</span>
+              <span style="font-weight: 900; color: #00ff88; font-size: 13px;">CAT 1 (40 JUGADORES)</span>
+            </div>
+            <div style="font-weight: 800; font-size: 15px; color: #fff; margin-top: 4px;">PROMESAS (70 - 80 OVR)</div>
+            <div style="margin-top: 10px;">
+              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
+              <input id="cat1GiftName" placeholder="Ej: Piano, Rosa..." style="width: 100%; font-weight:800;">
+            </div>
+            <div style="margin-top: 8px;">
+              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas / Multiplicador:</label>
+              <div style="display:flex; gap:6px;">
+                <input id="cat1Coins" type="number" style="width: 50%;" placeholder="Monedas" title="Monedas mínimas">
+                <input id="cat1Mult" type="number" style="width: 50%;" placeholder="Mult." title="Multiplicador de puntos">
+              </div>
+            </div>
           </div>
-          <div style="background: rgba(0,242,254,0.08); border: 1.5px solid #00f2fe; border-radius: 14px; padding: 12px; text-align: center;">
-            <div style="font-size: 26px;">🍩</div>
-            <div style="font-weight: 900; color: #00f2fe; font-size: 15px; margin-top: 2px;">5 MONEDAS</div>
-            <div style="font-weight: 800; font-size: 13px; color: #fff; margin-top: 2px;">CRACKS</div>
-            <div style="font-size: 12px; color: #90b89b; margin-top: 2px;">81 – 90 Average</div>
+
+          <!-- CAT 2: CRACKS (81-89) -->
+          <div style="background: rgba(0,242,254,0.08); border: 1.5px solid #00f2fe; border-radius: 14px; padding: 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 26px;">🍩</span>
+              <span style="font-weight: 900; color: #00f2fe; font-size: 13px;">CAT 2 (30 JUGADORES)</span>
+            </div>
+            <div style="font-weight: 800; font-size: 15px; color: #fff; margin-top: 4px;">CRACKS (81 - 89 OVR)</div>
+            <div style="margin-top: 10px;">
+              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
+              <input id="cat2GiftName" placeholder="Ej: Dona, Pesa..." style="width: 100%; font-weight:800;">
+            </div>
+            <div style="margin-top: 8px;">
+              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas / Multiplicador:</label>
+              <div style="display:flex; gap:6px;">
+                <input id="cat2Coins" type="number" style="width: 50%;" placeholder="Monedas" title="Monedas mínimas">
+                <input id="cat2Mult" type="number" style="width: 50%;" placeholder="Mult." title="Multiplicador de puntos">
+              </div>
+            </div>
           </div>
-          <div style="background: rgba(168,85,247,0.08); border: 1.5px solid #a855f7; border-radius: 14px; padding: 12px; text-align: center;">
-            <div style="font-size: 26px;">👒</div>
-            <div style="font-weight: 900; color: #a855f7; font-size: 15px; margin-top: 2px;">10 MONEDAS</div>
-            <div style="font-weight: 800; font-size: 13px; color: #fff; margin-top: 2px;">ESTRELLAS</div>
-            <div style="font-size: 12px; color: #90b89b; margin-top: 2px;">91 – 95 Average</div>
+
+          <!-- CAT 3: ESTRELLAS (90-95) -->
+          <div style="background: rgba(168,85,247,0.08); border: 1.5px solid #a855f7; border-radius: 14px; padding: 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 26px;">👒</span>
+              <span style="font-weight: 900; color: #a855f7; font-size: 13px;">CAT 3 (20 JUGADORES)</span>
+            </div>
+            <div style="font-weight: 800; font-size: 15px; color: #fff; margin-top: 4px;">ESTRELLAS (90 - 95 OVR)</div>
+            <div style="margin-top: 10px;">
+              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
+              <input id="cat3GiftName" placeholder="Ej: Gorra, Corazón..." style="width: 100%; font-weight:800;">
+            </div>
+            <div style="margin-top: 8px;">
+              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas / Multiplicador:</label>
+              <div style="display:flex; gap:6px;">
+                <input id="cat3Coins" type="number" style="width: 50%;" placeholder="Monedas" title="Monedas mínimas">
+                <input id="cat3Mult" type="number" style="width: 50%;" placeholder="Mult." title="Multiplicador de puntos">
+              </div>
+            </div>
           </div>
-          <div style="background: rgba(255,215,0,0.08); border: 1.5px solid #ffd700; border-radius: 14px; padding: 12px; text-align: center;">
-            <div style="font-size: 26px;">🦁</div>
-            <div style="font-weight: 900; color: #ffd700; font-size: 15px; margin-top: 2px;">30+ MONEDAS</div>
-            <div style="font-weight: 800; font-size: 13px; color: #fff; margin-top: 2px;">LEYENDAS</div>
-            <div style="font-size: 12px; color: #90b89b; margin-top: 2px;">96 – 99 Average</div>
+
+          <!-- CAT 4: LEYENDAS (96-99) -->
+          <div style="background: rgba(255,215,0,0.08); border: 1.5px solid #ffd700; border-radius: 14px; padding: 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 26px;">🦁</span>
+              <span style="font-weight: 900; color: #ffd700; font-size: 13px;">CAT 4 (10 JUGADORES)</span>
+            </div>
+            <div style="font-weight: 800; font-size: 15px; color: #fff; margin-top: 4px;">LEYENDAS (96 - 99 OVR)</div>
+            <div style="margin-top: 10px;">
+              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
+              <input id="cat4GiftName" placeholder="Ej: León, Dragón..." style="width: 100%; font-weight:800;">
+            </div>
+            <div style="margin-top: 8px;">
+              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas / Multiplicador:</label>
+              <div style="display:flex; gap:6px;">
+                <input id="cat4Coins" type="number" style="width: 50%;" placeholder="Monedas" title="Monedas mínimas">
+                <input id="cat4Mult" type="number" style="width: 50%;" placeholder="Mult." title="Multiplicador de puntos">
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- CHARACTERS LIST & FILTER TABS -->
+      <!-- CHARACTERS LIST & FILTER TABS (ORDERED BY AVERAGE) -->
       <div class="card">
         <div class="row" style="justify-content: space-between; align-items: center;">
           <div>
-            <div class="card-title">👤 Jugadores de Fútbol y Average (<span id="charCount">0</span>)</div>
-            <div class="hint">Agrega y edita jugadores, asigna su average (1-99) y foto de cutout</div>
+            <div class="card-title">👤 Plantilla de Jugadores de Fútbol (<span id="charCount">0</span>)</div>
+            <div class="hint">Ordenados automáticamente por Average (Mayor a menor). Agrega o edita cualquier jugador.</div>
           </div>
           <div class="row">
             <input id="searchCharInput" placeholder="🔍 Buscar jugador o equipo..." style="width: 220px;" oninput="filterCharacters()">
@@ -594,13 +654,13 @@
           </div>
         </div>
 
-        <!-- CATEGORY FILTER BUTTONS -->
-        <div class="row" style="margin-top: 14px; gap: 8px;">
-          <button class="alt active" id="btnFilterAll" onclick="filterCategory('all')">Todos</button>
-          <button class="alt" id="btnFilterTier1" onclick="filterCategory('promesas')">🟢 Promesas (70-80)</button>
-          <button class="alt" id="btnFilterTier2" onclick="filterCategory('cracks')">🔵 Cracks (81-90)</button>
-          <button class="alt" id="btnFilterTier3" onclick="filterCategory('estrellas')">🟣 Estrellas (91-95)</button>
-          <button class="alt" id="btnFilterTier4" onclick="filterCategory('leyendas')">🟡 Leyendas (96-99)</button>
+        <!-- CATEGORY FILTER BUTTONS WITH COUNTS -->
+        <div class="row" style="margin-top: 14px; gap: 8px; flex-wrap: wrap;">
+          <button class="alt active" id="btnFilterAll" onclick="filterCategory('all')">Todos (<span id="countAll">100</span>)</button>
+          <button class="alt" id="btnFilterTier4" onclick="filterCategory('leyendas')">🟡 Leyendas 96-99 (<span id="countTier4">10</span>)</button>
+          <button class="alt" id="btnFilterTier3" onclick="filterCategory('estrellas')">🟣 Estrellas 90-95 (<span id="countTier3">20</span>)</button>
+          <button class="alt" id="btnFilterTier2" onclick="filterCategory('cracks')">🔵 Cracks 81-89 (<span id="countTier2">30</span>)</button>
+          <button class="alt" id="btnFilterTier1" onclick="filterCategory('promesas')">🟢 Promesas 70-80 (<span id="countTier1">40</span>)</button>
         </div>
 
         <div class="chargrid" id="characterGrid"></div>
@@ -631,8 +691,8 @@
             </select>
           </div>
           <div>
-            <label class="hint" style="display: block; margin-bottom: 4px;">🎹 Regalo Especial que Cambia Personaje</label>
-            <input id="rerollGiftInput" value="Piano" placeholder="Ej: Piano, Dragón, León" style="width: 100%;">
+            <label class="hint" style="display: block; margin-bottom: 4px;">🌌 Regalo Especial que Cambia Personaje</label>
+            <input id="rerollGiftInput" value="Galaxia" placeholder="Ej: Galaxia, Dragón, León" style="width: 100%;">
           </div>
         </div>
 
@@ -725,20 +785,179 @@
 
     async function loadConfig() {
       config = await api('/api/config');
-      renderCharacters(config.characters);
+      if (config.characters) {
+        config.characters.sort((a, b) => (b.rating || 0) - (a.rating || 0) || a.name.localeCompare(b.name));
+      }
+      updateCategoryCounts();
+      renderCategoryGifts();
+      renderCharacters(config.characters || []);
       renderSelects();
       renderRules();
+    }
+
+    function updateCategoryCounts() {
+      if (!config.characters) return;
+      const chars = config.characters;
+      const countAll = chars.length;
+      const countTier4 = chars.filter(c => (c.rating || 0) >= 96).length;
+      const countTier3 = chars.filter(c => (c.rating || 0) >= 90 && (c.rating || 0) <= 95).length;
+      const countTier2 = chars.filter(c => (c.rating || 0) >= 81 && (c.rating || 0) <= 89).length;
+      const countTier1 = chars.filter(c => (c.rating || 0) >= 70 && (c.rating || 0) <= 80).length;
+
+      if (document.getElementById('countAll')) document.getElementById('countAll').textContent = countAll;
+      if (document.getElementById('countTier4')) document.getElementById('countTier4').textContent = countTier4;
+      if (document.getElementById('countTier3')) document.getElementById('countTier3').textContent = countTier3;
+      if (document.getElementById('countTier2')) document.getElementById('countTier2').textContent = countTier2;
+      if (document.getElementById('countTier1')) document.getElementById('countTier1').textContent = countTier1;
+    }
+
+    function renderCategoryGifts() {
+      const cg = config.categoryGifts || {
+        cat1: { giftName: 'Piano', coins: 1, multiplier: 1, icon: '🎹' },
+        cat2: { giftName: 'Dona', coins: 5, multiplier: 5, icon: '🍩' },
+        cat3: { giftName: 'Gorra', coins: 10, multiplier: 10, icon: '👒' },
+        cat4: { giftName: 'León', coins: 30, multiplier: 30, icon: '🦁' }
+      };
+
+      if (document.getElementById('cat1GiftName')) document.getElementById('cat1GiftName').value = cg.cat1?.giftName || 'Piano';
+      if (document.getElementById('cat1Coins')) document.getElementById('cat1Coins').value = cg.cat1?.coins ?? 1;
+      if (document.getElementById('cat1Mult')) document.getElementById('cat1Mult').value = cg.cat1?.multiplier ?? 1;
+
+      if (document.getElementById('cat2GiftName')) document.getElementById('cat2GiftName').value = cg.cat2?.giftName || 'Dona';
+      if (document.getElementById('cat2Coins')) document.getElementById('cat2Coins').value = cg.cat2?.coins ?? 5;
+      if (document.getElementById('cat2Mult')) document.getElementById('cat2Mult').value = cg.cat2?.multiplier ?? 5;
+
+      if (document.getElementById('cat3GiftName')) document.getElementById('cat3GiftName').value = cg.cat3?.giftName || 'Gorra';
+      if (document.getElementById('cat3Coins')) document.getElementById('cat3Coins').value = cg.cat3?.coins ?? 10;
+      if (document.getElementById('cat3Mult')) document.getElementById('cat3Mult').value = cg.cat3?.multiplier ?? 10;
+
+      if (document.getElementById('cat4GiftName')) document.getElementById('cat4GiftName').value = cg.cat4?.giftName || 'León';
+      if (document.getElementById('cat4Coins')) document.getElementById('cat4Coins').value = cg.cat4?.coins ?? 30;
+      if (document.getElementById('cat4Mult')) document.getElementById('cat4Mult').value = cg.cat4?.multiplier ?? 30;
+
+      updateSimButtons(cg);
+    }
+
+    function updateSimButtons(cg) {
+      const b1 = document.getElementById('simBtnCat1');
+      if (b1) {
+        b1.innerHTML = `
+          <span class="sim-icon">${cg.cat1?.icon || '🎹'}</span>
+          <span>${esc(cg.cat1?.giftName || 'Piano')} (${cg.cat1?.coins ?? 1} Moneda)</span>
+          <small style="color:#00ff88;font-size:11px;font-weight:800;">70-80 OVR (x${cg.cat1?.multiplier ?? 1})</small>
+        `;
+      }
+      const b2 = document.getElementById('simBtnCat2');
+      if (b2) {
+        b2.innerHTML = `
+          <span class="sim-icon">${cg.cat2?.icon || '🍩'}</span>
+          <span>${esc(cg.cat2?.giftName || 'Dona')} (${cg.cat2?.coins ?? 5} Monedas)</span>
+          <small style="color:#00f2fe;font-size:11px;font-weight:800;">81-89 OVR (x${cg.cat2?.multiplier ?? 5})</small>
+        `;
+      }
+      const b3 = document.getElementById('simBtnCat3');
+      if (b3) {
+        b3.innerHTML = `
+          <span class="sim-icon">${cg.cat3?.icon || '👒'}</span>
+          <span>${esc(cg.cat3?.giftName || 'Gorra')} (${cg.cat3?.coins ?? 10} Monedas)</span>
+          <small style="color:#a855f7;font-size:11px;font-weight:800;">90-95 OVR (x${cg.cat3?.multiplier ?? 10})</small>
+        `;
+      }
+      const b4 = document.getElementById('simBtnCat4');
+      if (b4) {
+        b4.innerHTML = `
+          <span class="sim-icon">${cg.cat4?.icon || '🦁'}</span>
+          <span>${esc(cg.cat4?.giftName || 'León')} (${cg.cat4?.coins ?? 30}+ Monedas)</span>
+          <small style="color:#ffd700;font-size:11px;font-weight:800;">96-99 OVR (x${cg.cat4?.multiplier ?? 30})</small>
+        `;
+      }
+    }
+
+    async function saveCategoryGifts() {
+      const categoryGifts = {
+        cat1: {
+          title: "Cat 1 - Promesas (70-80)",
+          giftName: document.getElementById('cat1GiftName').value.trim() || 'Piano',
+          coins: parseInt(document.getElementById('cat1Coins').value || '1', 10),
+          multiplier: parseInt(document.getElementById('cat1Mult').value || '1', 10),
+          minRating: 70,
+          maxRating: 80,
+          icon: "🎹"
+        },
+        cat2: {
+          title: "Cat 2 - Cracks (81-89)",
+          giftName: document.getElementById('cat2GiftName').value.trim() || 'Dona',
+          coins: parseInt(document.getElementById('cat2Coins').value || '5', 10),
+          multiplier: parseInt(document.getElementById('cat2Mult').value || '5', 10),
+          minRating: 81,
+          maxRating: 89,
+          icon: "🍩"
+        },
+        cat3: {
+          title: "Cat 3 - Estrellas (90-95)",
+          giftName: document.getElementById('cat3GiftName').value.trim() || 'Gorra',
+          coins: parseInt(document.getElementById('cat3Coins').value || '10', 10),
+          multiplier: parseInt(document.getElementById('cat3Mult').value || '10', 10),
+          minRating: 90,
+          maxRating: 95,
+          icon: "👒"
+        },
+        cat4: {
+          title: "Cat 4 - Leyendas (96-99)",
+          giftName: document.getElementById('cat4GiftName').value.trim() || 'León',
+          coins: parseInt(document.getElementById('cat4Coins').value || '30', 10),
+          multiplier: parseInt(document.getElementById('cat4Mult').value || '30', 10),
+          minRating: 96,
+          maxRating: 99,
+          icon: "🦁"
+        }
+      };
+
+      try {
+        await api('/api/config', {
+          method: 'POST',
+          body: JSON.stringify({ categoryGifts })
+        });
+        config.categoryGifts = categoryGifts;
+        updateSimButtons(categoryGifts);
+        alert('¡Configuración de regalos por categoría guardada exitosamente!');
+      } catch (e) {
+        alert('Error al guardar: ' + e.message);
+      }
+    }
+
+    async function sendCategoryTest(catKey) {
+      const cg = config.categoryGifts || {};
+      const cat = cg[catKey] || {};
+      const giftName = cat.giftName || (catKey === 'cat4' ? 'León' : catKey === 'cat3' ? 'Gorra' : catKey === 'cat2' ? 'Dona' : 'Piano');
+      const coins = cat.coins || (catKey === 'cat4' ? 30 : catKey === 'cat3' ? 10 : catKey === 'cat2' ? 5 : 1);
+      const username = `Fan_${catKey.toUpperCase()}_${Math.floor(Math.random() * 8999 + 1000)}`;
+
+      try {
+        await api('/api/test-event', {
+          method: 'POST',
+          body: JSON.stringify({ username, eventType: 'gift', giftName, giftCount: 1, coins })
+        });
+        refresh();
+      } catch (e) {
+        alert(e.message);
+      }
     }
 
     let currentCategoryFilter = 'all';
 
     function filterCategory(cat) {
       currentCategoryFilter = cat;
-      ['all', 'tier1', 'tier2', 'tier3', 'tier4'].forEach(t => {
-        const btn = document.getElementById(t === 'all' ? 'btnFilterAll' : t === 'tier1' ? 'btnFilterTier1' : t === 'tier2' ? 'btnFilterTier2' : t === 'tier3' ? 'btnFilterTier3' : 'btnFilterTier4');
+      ['btnFilterAll', 'btnFilterTier4', 'btnFilterTier3', 'btnFilterTier2', 'btnFilterTier1'].forEach(id => {
+        const btn = document.getElementById(id);
         if (btn) btn.classList.remove('active');
       });
-      const activeBtn = document.getElementById(cat === 'all' ? 'btnFilterAll' : cat === 'promesas' ? 'btnFilterTier1' : cat === 'cracks' ? 'btnFilterTier2' : cat === 'estrellas' ? 'btnFilterTier3' : 'btnFilterTier4');
+      const activeBtn = document.getElementById(
+        cat === 'all' ? 'btnFilterAll' : 
+        cat === 'promesas' ? 'btnFilterTier1' : 
+        cat === 'cracks' ? 'btnFilterTier2' : 
+        cat === 'estrellas' ? 'btnFilterTier3' : 'btnFilterTier4'
+      );
       if (activeBtn) activeBtn.classList.add('active');
 
       filterCharacters();
@@ -756,9 +975,9 @@
         const rating = c.rating || 85;
         let tierColor = '#00ff88';
         let tierName = 'PROMESA (70-80)';
-        if (rating >= 96) { tierColor = '#ffd700'; tierName = 'LEYENDA 99'; }
-        else if (rating >= 91) { tierColor = '#a855f7'; tierName = 'ESTRELLA (91-95)'; }
-        else if (rating >= 81) { tierColor = '#00f2fe'; tierName = 'CRACK (81-90)'; }
+        if (rating >= 96) { tierColor = '#ffd700'; tierName = 'LEYENDA (96-99)'; }
+        else if (rating >= 90) { tierColor = '#a855f7'; tierName = 'ESTRELLA (90-95)'; }
+        else if (rating >= 81) { tierColor = '#00f2fe'; tierName = 'CRACK (81-89)'; }
 
         return `
           <div class="charcard" style="position: relative;">
@@ -768,7 +987,7 @@
             <img src="${escAttr(c.image || '')}" alt="${escAttr(c.name)}" onerror="this.src='https://via.placeholder.com/150?text=Sin+Imagen'">
             <div class="charname">${esc(c.name)}</div>
             <div class="mini" style="display:flex; justify-content:space-between; align-items:center; margin-top: 4px;">
-              <span>${esc(c.series || 'Fútbol')}</span>
+              <span>${esc(c.series || c.club || 'Fútbol')}</span>
               <span style="background: rgba(255,255,255,0.1); color:#fff; font-weight:800; font-size:11px; padding:2px 6px; border-radius:4px;">${esc(c.position || 'DC')}</span>
             </div>
             <div style="font-size: 11px; font-weight: 800; color: ${tierColor}; margin-top: 6px; text-transform: uppercase;">
@@ -784,21 +1003,24 @@
     }
 
     function filterCharacters() {
-      const query = document.getElementById('searchCharInput').value.toLowerCase().trim();
-      let filtered = config.characters.filter(c => 
-        c.name.toLowerCase().includes(query) || (c.series && c.series.toLowerCase().includes(query))
+      const query = (document.getElementById('searchCharInput').value || '').toLowerCase().trim();
+      let filtered = (config.characters || []).filter(c => 
+        c.name.toLowerCase().includes(query) || 
+        (c.series && c.series.toLowerCase().includes(query)) ||
+        (c.club && c.club.toLowerCase().includes(query))
       );
 
       if (currentCategoryFilter === 'promesas') {
-        filtered = filtered.filter(c => (c.rating || 85) >= 70 && (c.rating || 85) <= 80);
+        filtered = filtered.filter(c => (c.rating || 0) >= 70 && (c.rating || 0) <= 80);
       } else if (currentCategoryFilter === 'cracks') {
-        filtered = filtered.filter(c => (c.rating || 85) >= 81 && (c.rating || 85) <= 90);
+        filtered = filtered.filter(c => (c.rating || 0) >= 81 && (c.rating || 0) <= 89);
       } else if (currentCategoryFilter === 'estrellas') {
-        filtered = filtered.filter(c => (c.rating || 85) >= 91 && (c.rating || 85) <= 95);
+        filtered = filtered.filter(c => (c.rating || 0) >= 90 && (c.rating || 0) <= 95);
       } else if (currentCategoryFilter === 'leyendas') {
-        filtered = filtered.filter(c => (c.rating || 85) >= 96);
+        filtered = filtered.filter(c => (c.rating || 0) >= 96);
       }
 
+      filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0) || a.name.localeCompare(b.name));
       renderCharacters(filtered);
     }
 
@@ -811,22 +1033,22 @@
         previewEl.style.background = 'rgba(255,215,0,0.15)';
         previewEl.style.color = '#ffd700';
         previewEl.style.borderColor = '#ffd700';
-        previewEl.textContent = '🟡 LEYENDA (96-99 AVERAGE / 30+ MONEDAS)';
-      } else if (rating >= 91) {
+        previewEl.textContent = '🟡 CAT 4: LEYENDA (96-99 AVERAGE / 10 JUGADORES)';
+      } else if (rating >= 90) {
         previewEl.style.background = 'rgba(168,85,247,0.15)';
         previewEl.style.color = '#a855f7';
         previewEl.style.borderColor = '#a855f7';
-        previewEl.textContent = '🟣 ESTRELLA (91-95 AVERAGE / 10 MONEDAS)';
+        previewEl.textContent = '🟣 CAT 3: ESTRELLA (90-95 AVERAGE / 20 JUGADORES)';
       } else if (rating >= 81) {
         previewEl.style.background = 'rgba(0,242,254,0.15)';
         previewEl.style.color = '#00f2fe';
         previewEl.style.borderColor = '#00f2fe';
-        previewEl.textContent = '🔵 CRACK (81-90 AVERAGE / 5 MONEDAS)';
+        previewEl.textContent = '🔵 CAT 2: CRACK (81-89 AVERAGE / 30 JUGADORES)';
       } else {
         previewEl.style.background = 'rgba(0,255,136,0.15)';
         previewEl.style.color = '#00ff88';
         previewEl.style.borderColor = '#00ff88';
-        previewEl.textContent = '🟢 PROMESA (70-80 AVERAGE / 1 MONEDA)';
+        previewEl.textContent = '🟢 CAT 1: PROMESA (70-80 AVERAGE / 40 JUGADORES)';
       }
     }
 
@@ -844,7 +1066,7 @@
       }
       if (config.goalConfig) {
         document.getElementById('targetGiftsInput').value = config.goalConfig.targetGifts || 50;
-        document.getElementById('rerollGiftInput').value = config.goalConfig.rerollGiftName || 'Piano';
+        document.getElementById('rerollGiftInput').value = config.goalConfig.rerollGiftName || 'Galaxia';
       }
     }
 
