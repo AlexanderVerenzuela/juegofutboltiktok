@@ -140,39 +140,39 @@ function chooseCharacter() {
 const defaultCategoryGifts = {
   cat1: {
     title: "Cat 1 - Promesas (70-80)",
-    giftName: "Piano",
+    giftName: "Rosa",
     coins: 1,
     minRating: 70,
     maxRating: 80,
     multiplier: 1,
-    icon: "🎹"
+    icon: "🌹"
   },
   cat2: {
     title: "Cat 2 - Cracks (81-89)",
-    giftName: "Dona",
+    giftName: "Corazón coreano",
     coins: 5,
     minRating: 81,
     maxRating: 89,
     multiplier: 5,
-    icon: "🍩"
+    icon: "🫰"
   },
   cat3: {
     title: "Cat 3 - Estrellas (90-95)",
-    giftName: "Gorra",
+    giftName: "Rosa de 10",
     coins: 10,
     minRating: 90,
     maxRating: 95,
     multiplier: 10,
-    icon: "👒"
+    icon: "💐"
   },
   cat4: {
     title: "Cat 4 - Leyendas (96-99)",
-    giftName: "León",
+    giftName: "Dona de 30",
     coins: 30,
     minRating: 96,
     maxRating: 99,
     multiplier: 30,
-    icon: "🦁"
+    icon: "🍩"
   }
 };
 
@@ -188,32 +188,43 @@ function getCategoryForGift(giftName = '', coins = 1) {
   const catGifts = settings.categoryGifts || defaultCategoryGifts;
   const cleanGift = normalizeGiftText(giftName);
 
-  // 1. Direct name or substring match against configured category gifts
+  // 1. Exact match against configured category gifts
   if (cleanGift) {
     for (const key of ['cat4', 'cat3', 'cat2', 'cat1']) {
       const g = catGifts[key];
       if (g && g.giftName) {
         const configuredName = normalizeGiftText(g.giftName);
-        if (cleanGift === configuredName || cleanGift.includes(configuredName) || configuredName.includes(cleanGift)) {
+        if (cleanGift === configuredName) {
+          return key;
+        }
+      }
+    }
+
+    // Substring match (cleanGift contains configured name, e.g. "rosa de 10" or "dona de 30")
+    for (const key of ['cat4', 'cat3', 'cat2', 'cat1']) {
+      const g = catGifts[key];
+      if (g && g.giftName) {
+        const configuredName = normalizeGiftText(g.giftName);
+        if (cleanGift.includes(configuredName)) {
           return key;
         }
       }
     }
   }
 
-  // 2. Bilingual dictionary for common TikTok gifts
-  const giftAliases = {
-    cat1: ['piano', 'teclado', 'rosa', 'rose', 'tiktok', 'pesa', 'dumbbell', 'helado', 'ice cream', 'dedo'],
-    cat2: ['dona', 'doughnut', 'donut', 'panda', 'microfono', 'microphone', 'manos', 'aplauso'],
-    cat3: ['gorra', 'cap', 'sombrero', 'corona', 'crown', 'gafas', 'sunglasses', 'rosa de amor', 'love rose', 'confeti'],
-    cat4: ['leon', 'lion', 'galaxia', 'galaxy', 'dragon', 'ballena', 'whale', 'universo', 'universe', 'cohete', 'rocket', 'avion', 'jet']
-  };
-
+  // 2. Specific aliases for popular gifts
   if (cleanGift) {
-    for (const [catKey, aliases] of Object.entries(giftAliases)) {
-      if (aliases.some(alias => cleanGift.includes(alias))) {
-        return catKey;
-      }
+    if (cleanGift.includes('dona de 30') || cleanGift.includes('dona 30') || cleanGift.includes('dona x30') || cleanGift.includes('doughnut 30') || cleanGift.includes('leon') || cleanGift.includes('lion') || cleanGift.includes('galaxia') || cleanGift.includes('galaxy') || cleanGift.includes('dragon')) {
+      return 'cat4';
+    }
+    if (cleanGift.includes('rosa de 10') || cleanGift.includes('rosa 10') || cleanGift.includes('rosa x10') || cleanGift.includes('rosa de amor') || cleanGift.includes('love rose')) {
+      return 'cat3';
+    }
+    if (cleanGift.includes('corazon coreano') || cleanGift.includes('corazon coeano') || cleanGift.includes('finger heart') || cleanGift.includes('dedos corazon') || cleanGift.includes('coreano') || cleanGift.includes('panda')) {
+      return 'cat2';
+    }
+    if (cleanGift.includes('rosa') || cleanGift.includes('rose') || cleanGift.includes('piano') || cleanGift.includes('tiktok') || cleanGift.includes('pesa')) {
+      return 'cat1';
     }
   }
 
