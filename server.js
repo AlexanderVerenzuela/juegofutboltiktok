@@ -482,6 +482,8 @@ function giftNameFromData(data) {
   return String(name || 'Rosa / Regalo');
 }
 
+const recentGiftTimes = new Map();
+
 function handleEvent(type, data) {
   const username = userFromData(data);
   if (!username) {
@@ -492,11 +494,28 @@ function handleEvent(type, data) {
   const rule = settings.rules?.[type];
   if (!rule?.enabled) return;
 
+  // Prevent double processing for streak gifts (ignore intermediate streak events where repeatEnd is false)
+  if (type === 'gift' && (data?.repeatEnd === false || data?.repeat_end === 0)) {
+    return;
+  }
+
   const giftName = type === 'gift' ? giftNameFromData(data) : '';
   const giftCount = type === 'gift' ? (data?.repeatCount || data?.giftDetails?.repeatCount || 1) : 1;
   const userAvatar = avatarFromData(data);
   const singleCost = type === 'gift' ? (data?.diamondCount || data?.giftDetails?.diamondCount || 1) : 1;
   const totalDiamonds = singleCost * giftCount;
+
+  const key = username.toLowerCase();
+
+  // Debounce rapid duplicate gift events from the same user within 1.5 seconds
+  if (type === 'gift') {
+    const lastTime = recentGiftTimes.get(key) || 0;
+    if (Date.now() - lastTime < 1500) {
+      console.log(`⚠️ [REGALO DUPLICADO BLOQUEADO] @${username} (${giftName}) ignorado por debounce de 1.5s`);
+      return;
+    }
+    recentGiftTimes.set(key, Date.now());
+  }
 
   if (type === 'gift') {
     const matchedCategory = getCategoryForGift(giftName, totalDiamonds);
@@ -517,8 +536,6 @@ function handleEvent(type, data) {
   if (type === 'gift' && rule.giftName && rule.giftName.trim().toLowerCase() !== giftName.trim().toLowerCase()) {
     return;
   }
-
-  const key = username.toLowerCase();
 
   // If user already exists and event is not a gift, skip to avoid feed/DOM spam
   if (assigned.has(key) && type !== 'gift') {
