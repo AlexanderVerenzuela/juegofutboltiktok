@@ -114,27 +114,23 @@
     .feed-user-top {
       display: flex;
       align-items: center;
-      gap: 8px;
-      max-width: 100%;
-    }
-
-    .user-avatar-mini {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 2px solid var(--gold-primary);
-      object-fit: cover;
-      flex-shrink: 0;
+      justify-content: center;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 4px 6px;
     }
 
     .feed-username {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
-      color: #ffffff;
+      color: #ffd700;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 120px;
+      max-width: 100%;
+      text-align: center;
+      letter-spacing: 0.4px;
     }
 
     .feed-face-wrap {
@@ -205,11 +201,11 @@
 
     .lb-table-headers {
       display: grid;
-      grid-template-columns: 45px 200px 1fr 220px;
-      gap: 14px;
-      padding: 16px 24px;
+      grid-template-columns: 36px 100px 1fr 185px;
+      gap: 12px;
+      padding: 14px 36px;
       background: rgba(0, 0, 0, 0.55);
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       color: rgba(255, 255, 255, 0.85);
       text-transform: uppercase;
@@ -222,22 +218,23 @@
       flex-direction: column;
       justify-content: space-between;
       gap: 16px;
-      padding: 18px;
+      padding: 16px 18px;
       height: 100%;
       overflow: hidden;
     }
 
     .lb-row-item {
       display: grid;
-      grid-template-columns: 45px 200px 1fr 220px;
+      grid-template-columns: 36px 100px 1fr 185px;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       background: rgba(12, 24, 48, 0.9);
       border: 2px solid rgba(255, 255, 255, 0.16);
       border-radius: 20px;
-      padding: 14px 20px;
+      padding: 12px 16px;
       height: 220px;
       flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     .lb-row-item.rank-1 {
@@ -254,7 +251,7 @@
     }
 
     .lb-rank-num {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 900;
       color: rgba(255, 255, 255, 0.85);
       text-align: center;
@@ -266,35 +263,38 @@
     .lb-user-cell {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
+      justify-content: center;
       gap: 6px;
       min-width: 0;
-    }
-
-    .user-avatar-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
+      width: 100%;
+      text-align: center;
     }
 
     .lb-avatar {
-      width: 72px;
-      height: 72px;
+      width: 62px;
+      height: 62px;
       border-radius: 50%;
       object-fit: cover;
       flex-shrink: 0;
-      border: 3px solid rgba(255,215,0,0.85);
+      border: 3px solid rgba(255, 215, 0, 0.7);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+      background: #091c36;
     }
+    .rank-1 .lb-avatar { border-color: #ffd700; box-shadow: 0 0 12px rgba(255, 215, 0, 0.5); }
+    .rank-2 .lb-avatar { border-color: #c0c0c0; box-shadow: 0 0 10px rgba(192, 192, 192, 0.4); }
+    .rank-3 .lb-avatar { border-color: #cd7f32; box-shadow: 0 0 10px rgba(205, 127, 50, 0.4); }
 
     .lb-username {
-      font-size: 26px;
+      font-size: 18px;
       font-weight: 900;
       color: #fff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 145px;
+      max-width: 100px;
+      text-align: center;
+      line-height: 1.2;
     }
 
     /* MASSIVE FACE CUTOUTS WITH OVR BADGES BELOW THE CUTOUT */
@@ -302,13 +302,14 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 14px;
+      gap: 10px;
       width: 100%;
       height: 100%;
+      min-width: 0;
     }
 
     .squad-mini-face-wrap {
-      width: 112px;
+      width: 104px;
       height: 180px;
       display: flex;
       flex-direction: column;
@@ -332,9 +333,9 @@
     .ovr-badge-pill-bottom {
       background: linear-gradient(135deg, #ffd700 0%, #ff8800 100%);
       color: #050a18;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 900;
-      padding: 3px 9px;
+      padding: 3px 8px;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.9);
       border: 1.5px solid #ffffff;
@@ -342,23 +343,23 @@
       z-index: 5;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       white-space: nowrap;
     }
 
     .squad-slot-empty {
-      width: 112px;
+      width: 104px;
       height: 180px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 44px;
+      font-size: 40px;
       color: rgba(255, 255, 255, 0.25);
       flex-shrink: 0;
     }
 
     .lb-copas-cell {
-      font-size: 30px;
+      font-size: 26px;
       font-weight: 900;
       color: #ffd700;
       text-align: right;
@@ -367,6 +368,8 @@
       justify-content: flex-end;
       gap: 6px;
       white-space: nowrap;
+      padding-right: 4px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
     }
 
     /* FRONT POP-UP ALERT OVERLAY */
@@ -501,10 +504,10 @@
         <span>🏆 TABLA DE POSICIONES (TOP 5)</span>
       </div>
       <div class="lb-table-headers">
-        <span>#</span>
-        <span>USUARIO</span>
-        <span>PLANTILLA (5 JUGADORES)</span>
-        <span>PUNTOS TOTALES</span>
+        <span style="text-align: center;">#</span>
+        <span style="text-align: center;">USUARIO</span>
+        <span style="padding-left: 2px;">PLANTILLA (5 JUGADORES)</span>
+        <span style="text-align: right; padding-right: 4px;">PUNTOS TOTALES</span>
       </div>
       <div class="lb-rows-list" id="leaderboardList">
         <!-- DYNAMIC FULL-WIDTH LEADERBOARD ROWS -->
@@ -623,7 +626,7 @@
       document.getElementById('alertCharName').textContent = item.character || item.name || 'Jugador';
       document.getElementById('alertImage').src = item.image || '/uploads/player_3.png';
       
-      const multTxt = mult > 1 ? `<span style="color:#ffd700;">(x${mult})</span>` : '(x1)';
+      const multTxt = mult > 1 ? `<span style="color:#ffd700;">(x${mult})` : '(x1)';
       document.getElementById('alertOvrBadge').innerHTML = `⚡ ${rating} AVERAGE ${multTxt}`;
 
       playChimeSound();
@@ -646,14 +649,12 @@
         const name = esc(item.character || item.name || 'Jugador');
         const user = esc(item.username || 'Donador');
         const img = item.image || '/uploads/player_3.png';
-        const avatar = item.userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user}`;
         const rating = item.rating || 85;
         const mult = item.multiplier || 1;
 
         return `
           <div class="horizontal-feed-card">
             <div class="feed-user-top">
-              <img class="user-avatar-mini" src="${avatar}" alt="${user}">
               <span class="feed-username">${user}</span>
             </div>
             <div class="feed-face-wrap">
@@ -712,10 +713,8 @@
           <div class="lb-row-item ${rankClass}">
             <span class="lb-rank-num">${rankNum}</span>
             <div class="lb-user-cell">
-              <div class="user-avatar-group">
-                <img class="lb-avatar" src="${avatar}" alt="${user}">
-                <span class="lb-username">${user}</span>
-              </div>
+              <img class="lb-avatar" src="${avatar}" alt="${user}">
+              <span class="lb-username">${user}</span>
             </div>
             <div class="lb-squad-mini-grid">
               ${squadMiniHtml}

@@ -11,6 +11,8 @@ import {
   getRandomPresets 
 } from 'tiktok-live-connector';
 
+import { initDatabase, dbSaveCharacter, dbDeleteCharacter, dbSaveSettings } from './db.js';
+
 // Disable EulerStream paid fallback route so it never throws pricing error
 RoomIdRouteConfig.skipFetchRoomIdFromEulerRoute = true;
 IsLiveRouteConfig.skipFetchRoomIdFromEulerRoute = true;
@@ -66,6 +68,17 @@ let settings = readJson(DATA_FILE, {
     popupDuration: 5000
   }
 });
+
+// Inicializar Supabase Database (con tablas tiktok_futbol_ aisladas)
+try {
+  const dbData = await initDatabase(characters, settings);
+  if (dbData.usingDb) {
+    characters = dbData.characters;
+    settings = dbData.settings;
+  }
+} catch (e) {
+  console.error('⚠️ [DB Init Error]:', e.message);
+}
 
 let connection = null;
 let connectedUser = '';
@@ -464,16 +477,17 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-app.post('/api/config', (req, res) => {
+app.post('/api/config', async (req, res) => {
   if (req.body.rules) settings.rules = req.body.rules;
   if (req.body.giftMappings) settings.giftMappings = req.body.giftMappings;
   if (req.body.goalConfig) settings.goalConfig = req.body.goalConfig;
   if (req.body.overlayConfig) settings.overlayConfig = req.body.overlayConfig;
   saveJson(DATA_FILE, settings);
+  await dbSaveSettings(settings);
   res.json({ ok: true, settings });
 });
 
-app.post('/api/characters', (req, res) => {
+app.post('/api/characters', async (req, res) => {
   try {
     const { id, name, series = '', image = '', rating = 85, position = 'DC', flag = '⚽', club = 'Fútbol', tier = '' } = req.body || {};
     if (!String(name || '').trim()) throw new Error('El nombre es obligatorio.');
@@ -508,18 +522,20 @@ app.post('/api/characters', (req, res) => {
       characters.push(item);
     }
     saveJson(CHAR_FILE, characters);
+    await dbSaveCharacter(item);
     res.json(item);
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 });
 
-app.delete('/api/characters/:id', (req, res) => {
+app.delete('/api/characters/:id', async (req, res) => {
   const id = req.params.id;
   const existing = characterById(id);
   if (!existing) return res.status(404).json({ error: 'Personaje no encontrado.' });
   characters = characters.filter(c => c.id !== id);
   saveJson(CHAR_FILE, characters);
+  await dbDeleteCharacter(id);
   res.json({ ok: true });
 });
 
