@@ -329,6 +329,26 @@
       justify-content: center;
     }
 
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 4px 11px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover {
+      background: rgba(0, 242, 254, 0.2);
+      border-color: var(--cyan);
+      transform: translateY(-1px);
+    }
+
     /* FEED LIST */
     .feed-grid {
       display: grid;
@@ -637,7 +657,42 @@
                 <input id="cat4Mult" type="number" style="width: 50%;" placeholder="Mult." title="Multiplicador de puntos">
               </div>
             </div>
+        </div>
+
+        <!-- GUIA & SUGERENCIAS DE NOMBRES POPULARES DE TIKTOK -->
+        <div style="background: rgba(0, 242, 254, 0.06); border: 1px dashed rgba(0, 242, 254, 0.35); border-radius: 12px; padding: 14px; margin-top: 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+            <b style="color: var(--cyan); font-size: 13px;">💡 ¿Dónde ver qué nombres poner? Regalos Oficiales de TikTok:</b>
+            <span style="font-size: 11px; color: #94a3b8;">Haz clic en cualquier regalo sugerido para cargarlo automáticamente:</span>
           </div>
+          <p style="color: #cbd5e1; font-size: 12px; margin-top: 6px; line-height: 1.4;">
+            Puedes escribir el nombre en <b>español o en inglés</b> (ej: <i>Piano, Rosa o Rose, Dona o Doughnut, Gorra o Cap, León o Lion</i>).
+            ¡Además, si TikTok envía cualquier otro regalo con ese número de monedas, <b>el sistema lo detecta automáticamente por monedas de respaldo</b>!
+          </p>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+            <span class="chip" onclick="setGiftName('cat1', 'Piano', 1)" style="border-color:#00ff88; color:#00ff88;">🎹 Piano (1 moneda)</span>
+            <span class="chip" onclick="setGiftName('cat1', 'Rosa', 1)">🌹 Rosa / Rose (1 moneda)</span>
+            <span class="chip" onclick="setGiftName('cat1', 'Pesa', 1)">🏋️ Pesa / Dumbbell (1 moneda)</span>
+            <span class="chip" onclick="setGiftName('cat1', 'TikTok', 1)">🎵 TikTok (1 moneda)</span>
+            <span class="chip" onclick="setGiftName('cat2', 'Dona', 5)" style="border-color:#00f2fe; color:#00f2fe;">🍩 Dona / Doughnut (5 monedas)</span>
+            <span class="chip" onclick="setGiftName('cat2', 'Panda', 5)">🐼 Panda (5 monedas)</span>
+            <span class="chip" onclick="setGiftName('cat2', 'Micrófono', 5)">🎤 Micrófono (5 monedas)</span>
+            <span class="chip" onclick="setGiftName('cat3', 'Gorra', 10)" style="border-color:#a855f7; color:#a855f7;">👒 Gorra / Cap (10 monedas)</span>
+            <span class="chip" onclick="setGiftName('cat3', 'Corona', 10)">👑 Corona / Little Crown (10 monedas)</span>
+            <span class="chip" onclick="setGiftName('cat3', 'Gafas', 10)">🕶️ Gafas de sol (10 monedas)</span>
+            <span class="chip" onclick="setGiftName('cat4', 'León', 30)" style="border-color:#ffd700; color:#ffd700;">🦁 León / Lion (30+ monedas)</span>
+            <span class="chip" onclick="setGiftName('cat4', 'Galaxia', 1000)">🌌 Galaxia / Galaxy (1000 monedas)</span>
+            <span class="chip" onclick="setGiftName('cat4', 'Ballena', 2150)">🐋 Ballena (2150 monedas)</span>
+          </div>
+        </div>
+
+        <!-- HISTORIAL EN VIVO DE REGALOS DETECTADOS POR TIKTOK -->
+        <div id="liveDetectedGiftsBox" style="margin-top: 14px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; display: none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+            <span style="font-weight: 800; font-size: 12px; color: #00f2fe;">📡 REGALOS DETECTADOS EN TIEMPO REAL DESDE TU TIKTOK LIVE:</span>
+            <span style="font-size: 11px; color: #94a3b8;">(Haz clic para asignarlo)</span>
+          </div>
+          <div id="liveGiftsHistoryList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
         </div>
       </div>
 
@@ -1364,6 +1419,37 @@
 
       renderIndexTop5(d.top5 || []);
       renderIndexFeed(d.feed || []);
+      renderLiveGiftsHistory(d.recentLiveGifts || []);
+    }
+
+    function setGiftName(catKey, name, coins) {
+      const el = document.getElementById(catKey + 'GiftName');
+      if (el) {
+        el.value = name;
+        el.focus();
+      }
+      const coinsEl = document.getElementById(catKey + 'Coins');
+      if (coinsEl && coins) {
+        coinsEl.value = coins;
+      }
+    }
+
+    function renderLiveGiftsHistory(gifts) {
+      const box = document.getElementById('liveDetectedGiftsBox');
+      const list = document.getElementById('liveGiftsHistoryList');
+      if (!box || !list) return;
+
+      if (!gifts || gifts.length === 0) {
+        box.style.display = 'none';
+        return;
+      }
+
+      box.style.display = 'block';
+      list.innerHTML = gifts.map(g => `
+        <span class="chip" onclick="setGiftName('${g.category || 'cat1'}', '${escAttr(g.giftName)}', ${g.singleCost || 1})" title="Haz clic para asignarlo a ${g.category?.toUpperCase() || 'CAT 1'}">
+          🎁 <b>${esc(g.giftName)}</b> (${g.singleCost || 1}c) de @${esc(g.username)} ➔ <b style="color:var(--primary);">${g.category?.toUpperCase()}</b>
+        </span>
+      `).join('');
     }
 
     function esc(s) {

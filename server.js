@@ -88,6 +88,7 @@ let feed = [];
 let rank = 0;
 let pending = [];
 let lastAlert = null;
+let recentLiveGifts = [];
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -175,21 +176,48 @@ const defaultCategoryGifts = {
   }
 };
 
+function normalizeGiftText(str = '') {
+  return String(str || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
 function getCategoryForGift(giftName = '', coins = 1) {
   const catGifts = settings.categoryGifts || defaultCategoryGifts;
-  const cleanGift = String(giftName || '').trim().toLowerCase();
+  const cleanGift = normalizeGiftText(giftName);
 
-  // 1. Direct gift name match against configured category gifts
+  // 1. Direct name or substring match against configured category gifts
   if (cleanGift) {
     for (const key of ['cat4', 'cat3', 'cat2', 'cat1']) {
       const g = catGifts[key];
-      if (g && g.giftName && g.giftName.trim().toLowerCase() === cleanGift) {
-        return key;
+      if (g && g.giftName) {
+        const configuredName = normalizeGiftText(g.giftName);
+        if (cleanGift === configuredName || cleanGift.includes(configuredName) || configuredName.includes(cleanGift)) {
+          return key;
+        }
       }
     }
   }
 
-  // 2. Fallback by coin count
+  // 2. Bilingual dictionary for common TikTok gifts
+  const giftAliases = {
+    cat1: ['piano', 'teclado', 'rosa', 'rose', 'tiktok', 'pesa', 'dumbbell', 'helado', 'ice cream', 'dedo'],
+    cat2: ['dona', 'doughnut', 'donut', 'panda', 'microfono', 'microphone', 'manos', 'aplauso'],
+    cat3: ['gorra', 'cap', 'sombrero', 'corona', 'crown', 'gafas', 'sunglasses', 'rosa de amor', 'love rose', 'confeti'],
+    cat4: ['leon', 'lion', 'galaxia', 'galaxy', 'dragon', 'ballena', 'whale', 'universo', 'universe', 'cohete', 'rocket', 'avion', 'jet']
+  };
+
+  if (cleanGift) {
+    for (const [catKey, aliases] of Object.entries(giftAliases)) {
+      if (aliases.some(alias => cleanGift.includes(alias))) {
+        return catKey;
+      }
+    }
+  }
+
+  // 3. Fallback by coin count
   const c4 = catGifts.cat4?.coins ?? 30;
   const c3 = catGifts.cat3?.coins ?? 10;
   const c2 = catGifts.cat2?.coins ?? 5;
@@ -456,8 +484,24 @@ function handleEvent(type, data) {
   const giftName = type === 'gift' ? giftNameFromData(data) : '';
   const giftCount = type === 'gift' ? (data?.repeatCount || data?.giftDetails?.repeatCount || 1) : 1;
   const userAvatar = avatarFromData(data);
+  const singleCost = type === 'gift' ? (data?.diamondCount || data?.giftDetails?.diamondCount || 1) : 1;
+  const totalDiamonds = singleCost * giftCount;
 
-  console.log(`🎁 [TikTok ${type.toUpperCase()}] @${username} enviando: ${giftName} (x${giftCount})`);
+  if (type === 'gift') {
+    const matchedCategory = getCategoryForGift(giftName, totalDiamonds);
+    recentLiveGifts.unshift({
+      username,
+      giftName,
+      giftCount,
+      singleCost,
+      totalDiamonds,
+      category: matchedCategory,
+      time: new Date().toLocaleTimeString('es-ES')
+    });
+    recentLiveGifts = recentLiveGifts.slice(0, 15);
+  }
+
+  console.log(`🎁 [TikTok ${type.toUpperCase()}] @${username} enviando: ${giftName} (x${giftCount}, ${totalDiamonds} monedas)`);
 
   if (type === 'gift' && rule.giftName && rule.giftName.trim().toLowerCase() !== giftName.trim().toLowerCase()) {
     return;
@@ -480,6 +524,8 @@ function handleEvent(type, data) {
         type,
         giftName,
         giftCount,
+        singleCost,
+        totalDiamonds,
         createdAt: Date.now()
       });
       pending = pending.slice(0, 100);
@@ -487,9 +533,9 @@ function handleEvent(type, data) {
     return;
   }
 
-  const character = chooseForRule(rule, giftName);
+  const character = chooseForRule(rule, giftName, totalDiamonds);
   try {
-    assignUser(username, `tiktok_${type}`, character, { type, giftName, giftCount }, userAvatar);
+    assignUser(username, `tiktok_${type}`, character, { type, giftName, giftCount, diamondCount: totalDiamonds, unitDiamonds: singleCost }, userAvatar);
   } catch (e) {
     console.error(`[TikTok Event Error]: ${e.message}`);
   }
@@ -521,6 +567,7 @@ app.get('/api/state', (req, res) => {
     all: allDonors,
     pending,
     lastAlert,
+    recentLiveGifts,
     goalConfig: settings.goalConfig || { targetGifts: 50, rewardCharacterId: '', rerollGiftName: 'Galaxia' },
     overlayConfig: settings.overlayConfig || {}
   });
@@ -605,17 +652,22 @@ app.delete('/api/characters/:id', async (req, res) => {
 // Test/Simulator Endpoint
 app.post('/api/test-event', (req, res) => {
   try {
-    const { username = `Donador_${Math.floor(Math.random() * 900 + 100)}`, eventType = 'gift', giftName = '', giftCount = 1, characterId = '', category = '' } = req.body;
+    const { username = `Donador_${Math.floor(Math.random() * 900 + 100)}`, eventType = 'gift', giftName = '', giftCount = 1, characterId = '', category = '', coins = 0 } = req.body;
     
     const catGifts = settings.categoryGifts || defaultCategoryGifts;
     let resolvedGiftName = giftName;
     let resolvedCount = giftCount;
+    let resolvedCoins = coins;
 
     if (category && catGifts[category]) {
       resolvedGiftName = catGifts[category].giftName;
-      resolvedCount = catGifts[category].coins || 1;
+      resolvedCoins = catGifts[category].coins || 1;
     } else if (!resolvedGiftName) {
       resolvedGiftName = catGifts.cat1?.giftName || 'Piano';
+    }
+
+    if (!resolvedCoins || resolvedCoins <= 0) {
+      resolvedCoins = resolvedCount;
     }
 
     const forcedChar = characterId ? characterById(characterId) : null;
@@ -624,9 +676,22 @@ app.post('/api/test-event', (req, res) => {
       username,
       `prueba_${eventType}`,
       forcedChar,
-      { type: eventType, giftName: resolvedGiftName, giftCount: resolvedCount, diamondCount: resolvedCount },
+      { type: eventType, giftName: resolvedGiftName, giftCount: resolvedCount, diamondCount: resolvedCoins },
       `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`
     );
+
+    if (eventType === 'gift') {
+      recentLiveGifts.unshift({
+        username,
+        giftName: resolvedGiftName,
+        giftCount: resolvedCount,
+        singleCost: resolvedCoins,
+        totalDiamonds: resolvedCoins * resolvedCount,
+        category: getCategoryForGift(resolvedGiftName, resolvedCoins),
+        time: new Date().toLocaleTimeString('es-ES')
+      });
+      recentLiveGifts = recentLiveGifts.slice(0, 15);
+    }
 
     res.json({ ok: true, result });
   } catch (e) {
