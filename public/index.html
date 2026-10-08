@@ -332,21 +332,45 @@
     .chip {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 999px;
-      padding: 4px 11px;
+      padding: 5px 12px;
       font-size: 11px;
       font-weight: 700;
       color: #fff;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      user-select: none;
     }
     .chip:hover {
-      background: rgba(0, 242, 254, 0.2);
-      border-color: var(--cyan);
+      background: rgba(255, 255, 255, 0.15);
       transform: translateY(-1px);
+    }
+
+    .cat-box {
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      min-width: 0;
+    }
+    .cat-box input {
+      min-width: 0 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      padding: 9px 12px !important;
+      font-size: 13px !important;
+      border-radius: 10px !important;
+      background: #090a14 !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    }
+    .cat-box input:focus {
+      border-color: var(--primary) !important;
     }
 
     /* FEED LIST */
@@ -578,121 +602,117 @@
           <button onclick="saveCategoryGifts()" style="font-weight:900; background: var(--primary); color: #050a18;">💾 GUARDAR REGALOS</button>
         </div>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 14px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 14px;">
           <!-- CAT 1: PROMESAS (70-80) -->
-          <div style="background: rgba(0,255,136,0.08); border: 1.5px solid #00ff88; border-radius: 14px; padding: 14px;">
+          <div class="cat-box" style="background: rgba(0,255,136,0.06); border: 1.5px solid #00ff88;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span style="font-size: 26px;">🎹</span>
-              <span style="font-weight: 900; color: #00ff88; font-size: 13px;">CAT 1 (40 JUGADORES)</span>
+              <span style="font-weight: 900; color: #00ff88; font-size: 12px; letter-spacing: 0.5px;">CAT 1 (40 JUGADORES)</span>
             </div>
-            <div style="font-weight: 800; font-size: 15px; color: #fff; margin-top: 4px;">PROMESAS (70 - 80 OVR)</div>
-            <div style="margin-top: 10px;">
-              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
-              <input id="cat1GiftName" placeholder="Ej: Piano, Rosa..." style="width: 100%; font-weight:800;">
+            <div style="font-weight: 800; font-size: 15px; color: #fff;">PROMESAS (70 - 80 OVR)</div>
+            <div>
+              <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
+              <input id="cat1GiftName" placeholder="Ej: Piano, Rosa..." style="font-weight:800;">
             </div>
-            <div style="margin-top: 8px;">
-              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas / Multiplicador:</label>
-              <div style="display:flex; gap:6px;">
-                <input id="cat1Coins" type="number" style="width: 50%;" placeholder="Monedas" title="Monedas mínimas">
-                <input id="cat1Mult" type="number" style="width: 50%;" placeholder="Mult." title="Multiplicador de puntos">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>
+                <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas:</label>
+                <input id="cat1Coins" type="number" placeholder="Monedas" title="Monedas mínimas">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Multiplicador:</label>
+                <input id="cat1Mult" type="number" placeholder="Mult." title="Multiplicador de puntos">
               </div>
             </div>
           </div>
 
           <!-- CAT 2: CRACKS (81-89) -->
-          <div style="background: rgba(0,242,254,0.08); border: 1.5px solid #00f2fe; border-radius: 14px; padding: 14px;">
+          <div class="cat-box" style="background: rgba(0,242,254,0.06); border: 1.5px solid #00f2fe;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span style="font-size: 26px;">🍩</span>
-              <span style="font-weight: 900; color: #00f2fe; font-size: 13px;">CAT 2 (30 JUGADORES)</span>
+              <span style="font-weight: 900; color: #00f2fe; font-size: 12px; letter-spacing: 0.5px;">CAT 2 (30 JUGADORES)</span>
             </div>
-            <div style="font-weight: 800; font-size: 15px; color: #fff; margin-top: 4px;">CRACKS (81 - 89 OVR)</div>
-            <div style="margin-top: 10px;">
-              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
-              <input id="cat2GiftName" placeholder="Ej: Dona, Pesa..." style="width: 100%; font-weight:800;">
+            <div style="font-weight: 800; font-size: 15px; color: #fff;">CRACKS (81 - 89 OVR)</div>
+            <div>
+              <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
+              <input id="cat2GiftName" placeholder="Ej: Dona, Pesa..." style="font-weight:800;">
             </div>
-            <div style="margin-top: 8px;">
-              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas / Multiplicador:</label>
-              <div style="display:flex; gap:6px;">
-                <input id="cat2Coins" type="number" style="width: 50%;" placeholder="Monedas" title="Monedas mínimas">
-                <input id="cat2Mult" type="number" style="width: 50%;" placeholder="Mult." title="Multiplicador de puntos">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>
+                <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas:</label>
+                <input id="cat2Coins" type="number" placeholder="Monedas" title="Monedas mínimas">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Multiplicador:</label>
+                <input id="cat2Mult" type="number" placeholder="Mult." title="Multiplicador de puntos">
               </div>
             </div>
           </div>
 
           <!-- CAT 3: ESTRELLAS (90-95) -->
-          <div style="background: rgba(168,85,247,0.08); border: 1.5px solid #a855f7; border-radius: 14px; padding: 14px;">
+          <div class="cat-box" style="background: rgba(168,85,247,0.06); border: 1.5px solid #a855f7;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span style="font-size: 26px;">👒</span>
-              <span style="font-weight: 900; color: #a855f7; font-size: 13px;">CAT 3 (20 JUGADORES)</span>
+              <span style="font-weight: 900; color: #a855f7; font-size: 12px; letter-spacing: 0.5px;">CAT 3 (20 JUGADORES)</span>
             </div>
-            <div style="font-weight: 800; font-size: 15px; color: #fff; margin-top: 4px;">ESTRELLAS (90 - 95 OVR)</div>
-            <div style="margin-top: 10px;">
-              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
-              <input id="cat3GiftName" placeholder="Ej: Gorra, Corazón..." style="width: 100%; font-weight:800;">
+            <div style="font-weight: 800; font-size: 15px; color: #fff;">ESTRELLAS (90 - 95 OVR)</div>
+            <div>
+              <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
+              <input id="cat3GiftName" placeholder="Ej: Gorra, Corazón..." style="font-weight:800;">
             </div>
-            <div style="margin-top: 8px;">
-              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas / Multiplicador:</label>
-              <div style="display:flex; gap:6px;">
-                <input id="cat3Coins" type="number" style="width: 50%;" placeholder="Monedas" title="Monedas mínimas">
-                <input id="cat3Mult" type="number" style="width: 50%;" placeholder="Mult." title="Multiplicador de puntos">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>
+                <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas:</label>
+                <input id="cat3Coins" type="number" placeholder="Monedas" title="Monedas mínimas">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Multiplicador:</label>
+                <input id="cat3Mult" type="number" placeholder="Mult." title="Multiplicador de puntos">
               </div>
             </div>
           </div>
 
           <!-- CAT 4: LEYENDAS (96-99) -->
-          <div style="background: rgba(255,215,0,0.08); border: 1.5px solid #ffd700; border-radius: 14px; padding: 14px;">
+          <div class="cat-box" style="background: rgba(255,215,0,0.06); border: 1.5px solid #ffd700;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span style="font-size: 26px;">🦁</span>
-              <span style="font-weight: 900; color: #ffd700; font-size: 13px;">CAT 4 (10 JUGADORES)</span>
+              <span style="font-weight: 900; color: #ffd700; font-size: 12px; letter-spacing: 0.5px;">CAT 4 (10 JUGADORES)</span>
             </div>
-            <div style="font-weight: 800; font-size: 15px; color: #fff; margin-top: 4px;">LEYENDAS (96 - 99 OVR)</div>
-            <div style="margin-top: 10px;">
-              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
-              <input id="cat4GiftName" placeholder="Ej: León, Dragón..." style="width: 100%; font-weight:800;">
+            <div style="font-weight: 800; font-size: 15px; color: #fff;">LEYENDAS (96 - 99 OVR)</div>
+            <div>
+              <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Regalo de TikTok:</label>
+              <input id="cat4GiftName" placeholder="Ej: León, Dragón..." style="font-weight:800;">
             </div>
-            <div style="margin-top: 8px;">
-              <label style="font-size: 12px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas / Multiplicador:</label>
-              <div style="display:flex; gap:6px;">
-                <input id="cat4Coins" type="number" style="width: 50%;" placeholder="Monedas" title="Monedas mínimas">
-                <input id="cat4Mult" type="number" style="width: 50%;" placeholder="Mult." title="Multiplicador de puntos">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>
+                <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Monedas:</label>
+                <input id="cat4Coins" type="number" placeholder="Monedas" title="Monedas mínimas">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: #90b89b; display:block; margin-bottom: 3px;">Multiplicador:</label>
+                <input id="cat4Mult" type="number" placeholder="Mult." title="Multiplicador de puntos">
               </div>
             </div>
-        </div>
-
-        <!-- GUIA & SUGERENCIAS DE NOMBRES POPULARES DE TIKTOK -->
-        <div style="background: rgba(0, 242, 254, 0.06); border: 1px dashed rgba(0, 242, 254, 0.35); border-radius: 12px; padding: 14px; margin-top: 16px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-            <b style="color: var(--cyan); font-size: 13px;">💡 ¿Dónde ver qué nombres poner? Regalos Oficiales de TikTok:</b>
-            <span style="font-size: 11px; color: #94a3b8;">Haz clic en cualquier regalo sugerido para cargarlo automáticamente:</span>
-          </div>
-          <p style="color: #cbd5e1; font-size: 12px; margin-top: 6px; line-height: 1.4;">
-            Puedes escribir el nombre en <b>español o en inglés</b> (ej: <i>Piano, Rosa o Rose, Dona o Doughnut, Gorra o Cap, León o Lion</i>).
-            ¡Además, si TikTok envía cualquier otro regalo con ese número de monedas, <b>el sistema lo detecta automáticamente por monedas de respaldo</b>!
-          </p>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-            <span class="chip" onclick="setGiftName('cat1', 'Piano', 1)" style="border-color:#00ff88; color:#00ff88;">🎹 Piano (1 moneda)</span>
-            <span class="chip" onclick="setGiftName('cat1', 'Rosa', 1)">🌹 Rosa / Rose (1 moneda)</span>
-            <span class="chip" onclick="setGiftName('cat1', 'Pesa', 1)">🏋️ Pesa / Dumbbell (1 moneda)</span>
-            <span class="chip" onclick="setGiftName('cat1', 'TikTok', 1)">🎵 TikTok (1 moneda)</span>
-            <span class="chip" onclick="setGiftName('cat2', 'Dona', 5)" style="border-color:#00f2fe; color:#00f2fe;">🍩 Dona / Doughnut (5 monedas)</span>
-            <span class="chip" onclick="setGiftName('cat2', 'Panda', 5)">🐼 Panda (5 monedas)</span>
-            <span class="chip" onclick="setGiftName('cat2', 'Micrófono', 5)">🎤 Micrófono (5 monedas)</span>
-            <span class="chip" onclick="setGiftName('cat3', 'Gorra', 10)" style="border-color:#a855f7; color:#a855f7;">👒 Gorra / Cap (10 monedas)</span>
-            <span class="chip" onclick="setGiftName('cat3', 'Corona', 10)">👑 Corona / Little Crown (10 monedas)</span>
-            <span class="chip" onclick="setGiftName('cat3', 'Gafas', 10)">🕶️ Gafas de sol (10 monedas)</span>
-            <span class="chip" onclick="setGiftName('cat4', 'León', 30)" style="border-color:#ffd700; color:#ffd700;">🦁 León / Lion (30+ monedas)</span>
-            <span class="chip" onclick="setGiftName('cat4', 'Galaxia', 1000)">🌌 Galaxia / Galaxy (1000 monedas)</span>
-            <span class="chip" onclick="setGiftName('cat4', 'Ballena', 2150)">🐋 Ballena (2150 monedas)</span>
           </div>
         </div>
 
-        <!-- HISTORIAL EN VIVO DE REGALOS DETECTADOS POR TIKTOK -->
-        <div id="liveDetectedGiftsBox" style="margin-top: 14px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; display: none;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-            <span style="font-weight: 800; font-size: 12px; color: #00f2fe;">📡 REGALOS DETECTADOS EN TIEMPO REAL DESDE TU TIKTOK LIVE:</span>
-            <span style="font-size: 11px; color: #94a3b8;">(Haz clic para asignarlo)</span>
+        <!-- FULL-WIDTH CLEAN SUGGESTIONS BAR -->
+        <div style="margin-top: 14px; padding: 12px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
+          <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">
+            💡 Clic rápido para cargar regalos sugeridos de TikTok:
           </div>
-          <div id="liveGiftsHistoryList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <span class="chip" onclick="setGiftName('cat1', 'Piano', 1)" style="border-color: rgba(0,255,136,0.5); color: #00ff88;">🎹 Piano (1c)</span>
+            <span class="chip" onclick="setGiftName('cat1', 'Rosa', 1)" style="border-color: rgba(0,255,136,0.5); color: #00ff88;">🌹 Rosa (1c)</span>
+            <span class="chip" onclick="setGiftName('cat1', 'Pesa', 1)" style="border-color: rgba(0,255,136,0.5); color: #00ff88;">🏋️ Pesa (1c)</span>
+            <span class="chip" onclick="setGiftName('cat2', 'Dona', 5)" style="border-color: rgba(0,242,254,0.5); color: #00f2fe;">🍩 Dona (5c)</span>
+            <span class="chip" onclick="setGiftName('cat2', 'Panda', 5)" style="border-color: rgba(0,242,254,0.5); color: #00f2fe;">🐼 Panda (5c)</span>
+            <span class="chip" onclick="setGiftName('cat2', 'Micrófono', 5)" style="border-color: rgba(0,242,254,0.5); color: #00f2fe;">🎤 Micrófono (5c)</span>
+            <span class="chip" onclick="setGiftName('cat3', 'Gorra', 10)" style="border-color: rgba(168,85,247,0.5); color: #a855f7;">👒 Gorra (10c)</span>
+            <span class="chip" onclick="setGiftName('cat3', 'Corona', 10)" style="border-color: rgba(168,85,247,0.5); color: #a855f7;">👑 Corona (10c)</span>
+            <span class="chip" onclick="setGiftName('cat4', 'León', 30)" style="border-color: rgba(255,215,0,0.5); color: #ffd700;">🦁 León (30+c)</span>
+            <span class="chip" onclick="setGiftName('cat4', 'Galaxia', 1000)" style="border-color: rgba(255,215,0,0.5); color: #ffd700;">🌌 Galaxia (1000c)</span>
+          </div>
         </div>
       </div>
 
@@ -1419,7 +1439,6 @@
 
       renderIndexTop5(d.top5 || []);
       renderIndexFeed(d.feed || []);
-      renderLiveGiftsHistory(d.recentLiveGifts || []);
     }
 
     function setGiftName(catKey, name, coins) {
@@ -1432,24 +1451,6 @@
       if (coinsEl && coins) {
         coinsEl.value = coins;
       }
-    }
-
-    function renderLiveGiftsHistory(gifts) {
-      const box = document.getElementById('liveDetectedGiftsBox');
-      const list = document.getElementById('liveGiftsHistoryList');
-      if (!box || !list) return;
-
-      if (!gifts || gifts.length === 0) {
-        box.style.display = 'none';
-        return;
-      }
-
-      box.style.display = 'block';
-      list.innerHTML = gifts.map(g => `
-        <span class="chip" onclick="setGiftName('${g.category || 'cat1'}', '${escAttr(g.giftName)}', ${g.singleCost || 1})" title="Haz clic para asignarlo a ${g.category?.toUpperCase() || 'CAT 1'}">
-          🎁 <b>${esc(g.giftName)}</b> (${g.singleCost || 1}c) de @${esc(g.username)} ➔ <b style="color:var(--primary);">${g.category?.toUpperCase()}</b>
-        </span>
-      `).join('');
     }
 
     function esc(s) {
